@@ -6,6 +6,9 @@ import Matches from './pages/matches'; // This is the new Matches page we create
 import Profile from './pages/Profile';
 import PublicProfile from './pages/PublicProfile';
 import Inbox from './pages/Inbox';
+import Messages from './pages/Messages'; 
+import Chat from './pages/Chat'; 
+import Search from './pages/Search';
 function App() {
   return (
     <Router>
@@ -21,6 +24,9 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/:id" element={<PublicProfile />} />
           <Route path="/inbox" element={<Inbox />} />
+          <Route path="/messages" element={<Messages />} />
+          <Route path="/chat/:id" element={<Chat />} />
+          <Route path="/search" element={<Search />} />
           {/* Add more routes here, like /matches or /profile */}
         </Routes>
 

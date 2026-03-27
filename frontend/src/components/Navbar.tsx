@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import {io} from "socket.io-client";
+import { io } from "socket.io-client";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation(); // Keep Navbar updated on route change
+  const location = useLocation(); 
   
   const token = localStorage.getItem('token');
   const isLoggedIn = !!token;
@@ -15,30 +15,20 @@ const Navbar = () => {
     setIsOpen(false);
     navigate('/auth');
   };
+
   const [unreadCount, setUnreadCount] = useState(0);
   const userId = token ? JSON.parse(atob(token.split('.')[1])).id : null;
 
   useEffect(() => {
     if (!userId) return;
-
-    // Connect to Socket server
     const socket = io("http://localhost:3000");
-
-    // Join personal room
     socket.emit("join", userId);
-
-    // Listen for new interest
     socket.on("new_interest", (data) => {
       setUnreadCount((prev) => prev + 1);
-      // Optional: Show a browser alert or custom toast
       alert(`${data.fromName} ${data.message}`);
     });
-
-    return () => {
-      socket.disconnect();
-    };
+    return () => { socket.disconnect(); };
   }, [userId]);
-
 
   useEffect(() => {
     const fetchCount = async () => {
@@ -53,12 +43,8 @@ const Navbar = () => {
         console.error("Count fetch failed");
       }
     };
-
     fetchCount();
-    // Optional: Refresh every 30 seconds to simulate real-time
-    const interval = setInterval(fetchCount, 30000);
-    return () => clearInterval(interval);
-  }, [token]);
+  }, [token, location.pathname]); // Refresh count when switching pages
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50 font-inter">
@@ -71,41 +57,46 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex space-x-6 xl:space-x-8 3xl:space-x-16 items-center">
+          <div className="hidden md:flex space-x-4 lg:space-x-6 3xl:space-x-12 items-center">
             <Link to="/" className="text-gray-700 hover:text-rose-500 font-semibold 3xl:text-4xl transition-colors">Home</Link>
             <Link to="/matches" className="text-gray-700 hover:text-rose-500 font-semibold 3xl:text-4xl transition-colors">Find Matches</Link>
             
             {isLoggedIn ? (
-              <div className="flex items-center space-x-4 3xl:space-x-12">
+              <div className="flex items-center space-x-3 lg:space-x-4 3xl:space-x-12">
                 
-                {/* ATTRACTIVE INBOX PILL */}
+                {/* 1. SEARCH PILL */}
                 <Link 
-                  to="/inbox" 
+                  to="/search" 
+                  className="group flex items-center gap-2 p-1 pr-4 rounded-full bg-rose-50 border border-rose-100 hover:bg-rose-500 transition-all duration-300 shadow-sm"
+                >
+                  <div className="w-10 h-10 3xl:w-20 3xl:h-20 rounded-full bg-rose-500 flex items-center justify-center text-white group-hover:bg-white group-hover:text-rose-500 transition-colors">
+                    <svg className="w-5 h-5 3xl:w-10 3xl:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                  <span className="text-rose-700 group-hover:text-white font-bold 3xl:text-3xl uppercase text-[10px] tracking-wider lg:text-xs 3xl:tracking-widest">Search</span>
+                </Link>
+
+                {/* 2. MESSAGES PILL */}
+                <Link 
+                  to="/messages" 
                   className="group flex items-center gap-2 p-1 pr-4 rounded-full bg-rose-50 border border-rose-100 hover:bg-rose-500 transition-all duration-300 relative shadow-sm"
                 >
                   <div className="w-10 h-10 3xl:w-20 3xl:h-20 rounded-full bg-rose-500 flex items-center justify-center text-white group-hover:bg-white group-hover:text-rose-500 transition-colors relative">
-                    {/* Inbox/Mail Icon */}
                     <svg className="w-5 h-5 3xl:w-10 3xl:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                     </svg>
-                    
-                    {/* Animated Notification Dot */}
-                    <span className="absolute -top-0.5 -right-0.5 flex h-3 w-3 3xl:h-6 3xl:w-6">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-3 w-3 3xl:h-6 3xl:w-6 bg-rose-600 border-2 border-white 3xl:border-4"></span>
-                    </span>  {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 flex h-5 w-5 3xl:h-8 3xl:w-8">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-5 w-5 3xl:h-8 3xl:w-8 bg-rose-600 border-2 border-white text-[10px] 3xl:text-lg text-white items-center justify-center font-bold">
-                {unreadCount}
-              </span>
-            </span>
-          )}
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 flex h-4 w-4 3xl:h-8 3xl:w-8">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-4 w-4 3xl:h-8 3xl:w-8 bg-rose-600 border border-white text-[8px] 3xl:text-lg text-white items-center justify-center font-bold">{unreadCount}</span>
+                      </span>
+                    )}
                   </div>
-                  <span className="text-rose-700 group-hover:text-white font-bold 3xl:text-3xl">Inbox</span>
+                  <span className="text-rose-700 group-hover:text-white font-bold 3xl:text-3xl uppercase text-[10px] tracking-wider lg:text-xs 3xl:tracking-widest">Inbox</span>
                 </Link>
 
-                {/* MY PROFILE PILL */}
+                {/* 3. MY PROFILE PILL */}
                 <Link 
                   to="/profile" 
                   className="group flex items-center gap-2 p-1 pr-4 rounded-full bg-rose-50 border border-rose-100 hover:bg-rose-500 transition-all duration-300 shadow-sm"
@@ -115,7 +106,7 @@ const Navbar = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                   </div>
-                  <span className="text-rose-700 group-hover:text-white font-bold 3xl:text-3xl">My Profile</span>
+                  <span className="text-rose-700 group-hover:text-white font-bold 3xl:text-3xl uppercase text-[10px] tracking-wider lg:text-xs 3xl:tracking-widest">Profile</span>
                 </Link>
 
                 <button 
@@ -155,12 +146,12 @@ const Navbar = () => {
         <div className="px-6 py-6 space-y-4 shadow-xl">
           <Link to="/" onClick={() => setIsOpen(false)} className="block text-gray-700 font-semibold text-lg border-b pb-2">Home</Link>
           <Link to="/matches" onClick={() => setIsOpen(false)} className="block text-gray-700 font-semibold text-lg border-b pb-2">Find Matches</Link>
-          
           {isLoggedIn ? (
             <>
-              <Link to="/inbox" onClick={() => setIsOpen(false)} className="block text-rose-600 font-bold text-lg border-b pb-2">Inbox (New)</Link>
+              <Link to="/search" onClick={() => setIsOpen(false)} className="block text-rose-600 font-bold text-lg border-b pb-2">Search Filters</Link>
+              <Link to="/messages" onClick={() => setIsOpen(false)} className="block text-rose-600 font-bold text-lg border-b pb-2">Inbox ({unreadCount})</Link>
               <Link to="/profile" onClick={() => setIsOpen(false)} className="block text-rose-600 font-bold text-lg border-b pb-2">My Profile</Link>
-              <button onClick={handleLogout} className="block w-full text-left text-gray-400 font-bold text-lg">Logout</button>
+              <button onClick={handleLogout} className="block w-full text-left text-gray-400 font-bold text-lg pt-2">Logout</button>
             </>
           ) : (
             <Link to="/auth" onClick={() => setIsOpen(false)} className="block bg-rose-500 text-white text-center py-4 rounded-2xl font-bold text-lg">Login / Register</Link>

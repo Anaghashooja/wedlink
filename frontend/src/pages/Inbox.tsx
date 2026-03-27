@@ -40,7 +40,7 @@ const Inbox: React.FC = () => {
         
         // Show notification
         setNotification({ 
-          msg: status === 'accepted' ? 'Connection Accepted! You can now chat.' : 'Request Declined.',
+          msg: status === 'accepted' ? 'Connection Accepted! Go to "Messages" to start chatting.' : 'Request Declined.',
           type: status === 'accepted' ? 'success' : 'info'
         });
 

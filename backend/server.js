@@ -8,39 +8,55 @@ const app = express();
 const port = 3000;
 const http = require("http");
 const server = http.createServer(app);
-const io = new Server(server);  
+const io = new Server(server, {
+  cors: {
+    origin: ["http://localhost:5173", "http://localhost:5174"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
+  }
+});  
 dotenv.config();
 
 
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:5174'], // Match your frontend port
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    origin: ["http://localhost:5173", "http://localhost:5174"], // Allow both common Vite ports
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true
 }));
 app.set("socketio", io);    
-io.on("connection", (socket) => {
-    console.log("A user connected:", socket.id);
+io.on('connection', (socket) => {
+  
+  socket.on('join_chat', (data) => {
+    socket.join(data.room);
+  });
 
-    socket.on("join_room", (data) => {
-        socket.join(data.room);
-        console.log(`User ${data.user} joined room ${data.room}`);
-    });
-
-    socket.on("send_message", (data) => {
-        // Send to everyone in the room
-        io.to(data.room).emit("receive_message", data);
-    });
-
-    socket.on("disconnect", () => {
-        console.log("User disconnected:", socket.id);
-    });
+  socket.on('send_message', async (data) => {
+    try {
+      const Message = require('./models/Message');
+      const newMsg = new Message({
+        conversationId: data.room,
+        sender: data.sender,
+        receiver: data.receiver,
+        text: data.text,
+        createdAt: data.createdAt
+      });
+      await newMsg.save();
+      
+      // Send to the OTHER person in the room only
+      socket.to(data.room).emit('receive_message', data);
+    } catch (err) {
+      console.error("Socket Error:", err);
+    }
+  });
 });
 app.use(express.json());
- mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI)
  .then(() => console.log("MongoDB connected"))
  .catch(err => console.log(err)) ;
  app.use('/api/auth', require('./routes/auth'));
  app.use('/api/requests', require('./routes/request'));
+ app.use('/api/messages', require('./routes/message'));
 app.get("/", (req, res) => {
     res.send("Hello World!");
 });

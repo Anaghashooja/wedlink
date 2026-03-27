@@ -152,12 +152,43 @@ const getPublicProfile = async (req, res) => {
         res.status(500).send("Server Error");
     }
 };
+const searchUsers = async (req, res) => {
+    try {
+        const { minAge, maxAge, religion, profession, minIncome, hobbies } = req.query;
+        let query = { _id: { $ne: req.user.id } }; // Exclude the current user
 
+        // 1. Age Logic (Calculated from Date of Birth)
+        if (minAge || maxAge) {
+            const now = new Date();
+            if (minAge) {
+                const minDate = new Date(now.getFullYear() - minAge, now.getMonth(), now.getDate());
+                query.dateOfBirth = { ...query.dateOfBirth, $lte: minDate };
+            }
+            if (maxAge) {
+                const maxDate = new Date(now.getFullYear() - maxAge, now.getMonth(), now.getDate());
+                query.dateOfBirth = { ...query.dateOfBirth, $gte: maxDate };
+            }
+        }
+
+        // 2. Exact Match Filters
+        if (religion) query.religion = religion;
+
+        // 3. Partial Match / Search Filters
+        if (profession) query.profession = { $regex: profession, $options: 'i' };
+        if (hobbies) query.hobbies = { $in: hobbies.split(',') }; // Assuming comma-separated string
+
+        const results = await User.find(query).select("-password");
+        res.json(results);
+    } catch (err) {
+        res.status(500).send("Search Error");
+    }
+};
 module.exports = {
     register,
     googleAuth,
     login,
     getMatches,
     getProfile,
-    getPublicProfile
+    getPublicProfile,
+    searchUsers
 };
