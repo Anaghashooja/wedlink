@@ -1,6 +1,7 @@
 const Request = require('../models/Request');
 const User = require('../models/User');
-
+const sendEmail = require('../config/email');
+const sendPush = require('../config/firebase');
 exports.sendRequest = async (req, res) => {
     try {
         const receiverId = req.params.id;
@@ -30,18 +31,42 @@ exports.sendRequest = async (req, res) => {
 
         await newRequest.save();
         res.json({ msg: "Interest sent successfully!" });
-        const io=req.app.get("socketio");
-        io.to(receiverId).emit("receive_request", {
+
+        // 4. Notifications (Socket, Email, Push)
+        const io = req.app.get("socketio");
+        const receiver = await User.findById(receiverId);
+
+        // a. Real-time Socket
+        io.to(receiverId).emit("new_interest", {
             senderId,
             senderName,
             receiverId,
             message: "New interest request"
         }); 
 
+        // b. Email Alert
+        if (receiver && receiver.email) {
+            sendEmail(
+                receiver.email, 
+                "New Interest on Wedlink 💖", 
+                `Hi ${receiver.name}, ${senderName} has sent you a connection request! Check your Wedlink Inbox.`
+            );
+        }
+
+        // c. Push Notification
+        if (receiver && receiver.fcmToken) {
+            sendPush(
+                receiver.fcmToken,
+                "New Interest! 💖",
+                `${senderName} sent you a connection request.`
+            );
+        }
+
     } catch (err) {
         console.error(err);
         res.status(500).send("Server Error");
     }
+    
 };
 exports.getReceivedRequests = async (req, res) => {
     try {

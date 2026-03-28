@@ -18,6 +18,7 @@ const [btnLoading, setBtnLoading] = useState(false);
         });
         const data = await res.json();
         setUser(data);
+        setRequestSent(data.connectionStatus === 'pending' || data.connectionStatus === 'accepted');
       } catch (err) {
         console.error("Error fetching user");
       } finally {
@@ -56,26 +57,43 @@ const [btnLoading, setBtnLoading] = useState(false);
   if (loading) return <div className="h-screen flex items-center justify-center 3xl:text-4xl text-rose-500 font-bold">Loading Profile...</div>;
   if (!user) return <div className="text-center py-20">User not found</div>;
 
+  const shouldBlur = user.photoPrivacy === true && user.connectionStatus !== 'accepted';
+
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-white font-inter">
       
       {/* LEFT SIDE (40%): Image Gallery - STICKY on Desktop */}
       <div className="lg:w-[40%] h-[50vh] lg:h-[calc(100vh-80px)] lg:sticky lg:top-20 bg-gray-100 overflow-hidden group">
-        <img 
-          src={user.photos?.[activeImg] || `https://ui-avatars.com/api/?name=${user.name}&size=1000`} 
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-          alt="Main"
-        />
+        <div className="relative w-full h-full overflow-hidden">
+          <img 
+            src={user.photos?.[activeImg] || `https://ui-avatars.com/api/?name=${user.name}&size=1000`} 
+            className={`w-full h-full object-cover transition-all duration-700 ${shouldBlur ? 'blur-3xl scale-110 grayscale' : 'group-hover:scale-105'}`}
+            alt="Main"
+          />
+          
+          {/* Privacy Overlay for Main Image */}
+          {shouldBlur && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
+                <span className="material-symbols-outlined text-white text-6xl 3xl:text-9xl mb-4">lock</span>
+                <p className="text-white text-sm md:text-xl 3xl:text-5xl font-bold uppercase tracking-[0.2em] text-center px-10 leading-relaxed">
+                  Photos hidden <br/> for privacy
+                </p>
+                <p className="text-rose-200 text-[10px] 3xl:text-2xl mt-4 font-semibold opacity-80 uppercase">
+                  Visible to accepted connections
+                </p>
+            </div>
+          )}
+        </div>
         
         {/* Thumbnail Navigation Overlay */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 3xl:gap-6 bg-black/20 backdrop-blur-md p-3 rounded-2xl">
           {user.photos?.map((img: string, index: number) => (
             <button 
               key={index} 
-              onClick={() => setActiveImg(index)}
-              className={`w-12 h-12 3xl:w-24 3xl:h-24 rounded-lg border-2 transition-all overflow-hidden ${activeImg === index ? 'border-rose-500 scale-110' : 'border-transparent opacity-70'}`}
+              onClick={() => !shouldBlur && setActiveImg(index)}
+              className={`w-12 h-12 3xl:w-24 3xl:h-24 rounded-lg border-2 transition-all overflow-hidden ${activeImg === index ? 'border-rose-500 scale-110' : 'border-transparent opacity-70'} ${shouldBlur ? 'cursor-not-allowed grayscale' : ''}`}
             >
-              <img src={img} className="w-full h-full object-cover" alt="" />
+              <img src={img} className={`w-full h-full object-cover ${shouldBlur ? 'blur-sm' : ''}`} alt="" />
             </button>
           ))}
         </div>

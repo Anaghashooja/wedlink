@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-const { upload } = require('../config/clioudinary');
+const { upload } = require('../config/cloudinary');
 
 // Register user and upload photos
 const register = async (req, res) => {
@@ -118,9 +118,21 @@ const login = async (req, res) => {
 // Get matches (all users)
 const getMatches = async (req, res) => {
     try {
-        // Fetch all users. In a real app, you'd filter by Gender preference here.
-        const users = await User.find().select("-password"); // Don't send passwords!
-        res.json(users);
+        const Request = require('../models/Request');
+        const users = await User.find().select("-password").lean();
+        
+        // Enhance each user with connection status relative to the requester
+        const usersWithStatus = await Promise.all(users.map(async (u) => {
+            const conn = await Request.findOne({
+                $or: [
+                    { sender: req.user.id, receiver: u._id },
+                    { sender: u._id, receiver: req.user.id }
+                ]
+            });
+            return { ...u, connectionStatus: conn ? conn.status : 'none' };
+        }));
+
+        res.json(usersWithStatus);
     } catch (err) {
         res.status(500).send("Server Error");
     }
@@ -137,13 +149,21 @@ const getProfile = async (req, res) => {
 };
 const getPublicProfile = async (req, res) => {
    try {
-        // Find user by ID from URL params, exclude password
-        const user = await User.findById(req.params.id).select("-password");
+        const Request = require('../models/Request');
+        const user = await User.findById(req.params.id).select("-password").lean();
         
         if (!user) {
             return res.status(404).json({ msg: "User not found" });
         }
+
+        const conn = await Request.findOne({
+            $or: [
+                { sender: req.user.id, receiver: user._id },
+                { sender: user._id, receiver: req.user.id }
+            ]
+        });
         
+        user.connectionStatus = conn ? conn.status : 'none';
         res.json(user);
     } catch (err) {
         if (err.kind === 'ObjectId') {
@@ -177,11 +197,47 @@ const searchUsers = async (req, res) => {
         if (profession) query.profession = { $regex: profession, $options: 'i' };
         if (hobbies) query.hobbies = { $in: hobbies.split(',') }; // Assuming comma-separated string
 
-        const results = await User.find(query).select("-password");
-        res.json(results);
+        const results = await User.find(query).select("-password").lean();
+        const Request = require('../models/Request');
+
+        const resultsWithStatus = await Promise.all(results.map(async (u) => {
+            const conn = await Request.findOne({
+                $or: [
+                    { sender: req.user.id, receiver: u._id },
+                    { sender: u._id, receiver: req.user.id }
+                ]
+            });
+            return { ...u, connectionStatus: conn ? conn.status : 'none' };
+        }));
+
+        res.json(resultsWithStatus);
     } catch (err) {
         res.status(500).send("Search Error");
     }
+};
+const submitVerification = async (req, res) => {
+    try {
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ msg: "Please upload a verification document" });
+        }
+        
+        const user = await User.findById(req.user.id);
+        user.verificationDoc = req.files[0].path; // Store the Cloudinary URL
+        user.verificationStatus = 'pending';
+        await user.save();
+
+        res.json({ msg: "Verification submitted for review", status: 'pending' });
+    } catch (err) {
+        res.status(500).send("Server Error");
+    }
+};
+const togglePrivacy=async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        user.photoPrivacy = !user.photoPrivacy;
+        await user.save();
+        res.json({ photoPrivacy: user.photoPrivacy, msg: "Privacy updated" });
+    } catch (err) { res.status(500).send("Error updating privacy"); }
 };
 module.exports = {
     register,
@@ -190,5 +246,7 @@ module.exports = {
     getMatches,
     getProfile,
     getPublicProfile,
-    searchUsers
+    searchUsers,
+    submitVerification,
+    togglePrivacy
 };

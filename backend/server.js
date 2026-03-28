@@ -57,6 +57,8 @@ mongoose.connect(process.env.MONGODB_URI)
  app.use('/api/auth', require('./routes/auth'));
  app.use('/api/requests', require('./routes/request'));
  app.use('/api/messages', require('./routes/message'));
+ app.use('/api/stories', require('./routes/story'));
+ app.use('/api/membership', require('./routes/membership'));
 app.get("/", (req, res) => {
     res.send("Hello World!");
 });

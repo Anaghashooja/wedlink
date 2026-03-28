@@ -25,7 +25,6 @@ const Navbar = () => {
     socket.emit("join", userId);
     socket.on("new_interest", (data) => {
       setUnreadCount((prev) => prev + 1);
-      alert(`${data.fromName} ${data.message}`);
     });
     return () => { socket.disconnect(); };
   }, [userId]);
@@ -44,7 +43,7 @@ const Navbar = () => {
       }
     };
     fetchCount();
-  }, [token, location.pathname]); // Refresh count when switching pages
+  }, [token, location.pathname]);
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50 font-inter">
@@ -57,84 +56,50 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex space-x-4 lg:space-x-6 3xl:space-x-12 items-center">
+          <div className="hidden md:flex space-x-4 lg:space-x-8 3xl:space-x-16 items-center">
             <Link to="/" className="text-gray-700 hover:text-rose-500 font-semibold 3xl:text-4xl transition-colors">Home</Link>
             <Link to="/matches" className="text-gray-700 hover:text-rose-500 font-semibold 3xl:text-4xl transition-colors">Find Matches</Link>
+            <Link to="/stories" className="text-gray-700 hover:text-rose-500 font-semibold 3xl:text-4xl transition-colors">Stories</Link>
+            
+            {/* ADDED PLANS LINK HERE */}
+            <Link to="/plans" className="text-gray-700 hover:text-rose-500 font-semibold 3xl:text-4xl transition-colors">Plans</Link>
             
             {isLoggedIn ? (
               <div className="flex items-center space-x-3 lg:space-x-4 3xl:space-x-12">
-                
-                {/* 1. SEARCH PILL */}
-                <Link 
-                  to="/search" 
-                  className="group flex items-center gap-2 p-1 pr-4 rounded-full bg-rose-50 border border-rose-100 hover:bg-rose-500 transition-all duration-300 shadow-sm"
-                >
+                <Link to="/search" className="group flex items-center gap-2 p-1 pr-4 rounded-full bg-rose-50 border border-rose-100 hover:bg-rose-500 transition-all duration-300 shadow-sm">
                   <div className="w-10 h-10 3xl:w-20 3xl:h-20 rounded-full bg-rose-500 flex items-center justify-center text-white group-hover:bg-white group-hover:text-rose-500 transition-colors">
-                    <svg className="w-5 h-5 3xl:w-10 3xl:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
+                    <svg className="w-5 h-5 3xl:w-10 3xl:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                   </div>
-                  <span className="text-rose-700 group-hover:text-white font-bold 3xl:text-3xl uppercase text-[10px] tracking-wider lg:text-xs 3xl:tracking-widest">Search</span>
+                  <span className="text-rose-700 group-hover:text-white font-bold 3xl:text-3xl uppercase text-[10px] tracking-wider">Search</span>
                 </Link>
 
-                {/* 2. MESSAGES PILL */}
-                <Link 
-                  to="/messages" 
-                  className="group flex items-center gap-2 p-1 pr-4 rounded-full bg-rose-50 border border-rose-100 hover:bg-rose-500 transition-all duration-300 relative shadow-sm"
-                >
+                <Link to="/messages" className="group flex items-center gap-2 p-1 pr-4 rounded-full bg-rose-50 border border-rose-100 hover:bg-rose-500 transition-all duration-300 relative shadow-sm">
                   <div className="w-10 h-10 3xl:w-20 3xl:h-20 rounded-full bg-rose-500 flex items-center justify-center text-white group-hover:bg-white group-hover:text-rose-500 transition-colors relative">
-                    <svg className="w-5 h-5 3xl:w-10 3xl:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                    </svg>
-                    {unreadCount > 0 && (
-                      <span className="absolute -top-1 -right-1 flex h-4 w-4 3xl:h-8 3xl:w-8">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-4 w-4 3xl:h-8 3xl:w-8 bg-rose-600 border border-white text-[8px] 3xl:text-lg text-white items-center justify-center font-bold">{unreadCount}</span>
-                      </span>
-                    )}
+                    <svg className="w-5 h-5 3xl:w-10 3xl:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+                    {unreadCount > 0 && <span className="absolute -top-1 -right-1 flex h-4 w-4 3xl:h-8 3xl:w-8"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span><span className="relative inline-flex rounded-full h-4 w-4 3xl:h-8 3xl:w-8 bg-rose-600 border border-white text-[8px] 3xl:text-lg text-white items-center justify-center font-bold">{unreadCount}</span></span>}
                   </div>
-                  <span className="text-rose-700 group-hover:text-white font-bold 3xl:text-3xl uppercase text-[10px] tracking-wider lg:text-xs 3xl:tracking-widest">Inbox</span>
+                  <span className="text-rose-700 group-hover:text-white font-bold 3xl:text-3xl uppercase text-[10px] tracking-wider">Inbox</span>
                 </Link>
 
-                {/* 3. MY PROFILE PILL */}
-                <Link 
-                  to="/profile" 
-                  className="group flex items-center gap-2 p-1 pr-4 rounded-full bg-rose-50 border border-rose-100 hover:bg-rose-500 transition-all duration-300 shadow-sm"
-                >
+                <Link to="/profile" className="group flex items-center gap-2 p-1 pr-4 rounded-full bg-rose-50 border border-rose-100 hover:bg-rose-500 transition-all duration-300 shadow-sm">
                   <div className="w-10 h-10 3xl:w-20 3xl:h-20 rounded-full bg-rose-500 flex items-center justify-center text-white group-hover:bg-white group-hover:text-rose-500 transition-colors">
-                    <svg className="w-5 h-5 3xl:w-10 3xl:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
+                    <svg className="w-5 h-5 3xl:w-10 3xl:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                   </div>
-                  <span className="text-rose-700 group-hover:text-white font-bold 3xl:text-3xl uppercase text-[10px] tracking-wider lg:text-xs 3xl:tracking-widest">Profile</span>
+                  <span className="text-rose-700 group-hover:text-white font-bold 3xl:text-3xl uppercase text-[10px] tracking-wider">Profile</span>
                 </Link>
 
-                <button 
-                  onClick={handleLogout}
-                  className="text-gray-400 hover:text-rose-600 font-bold 3xl:text-3xl transition-colors pl-2"
-                >
-                  Logout
-                </button>
+                <button onClick={handleLogout} className="text-gray-400 hover:text-rose-600 font-bold 3xl:text-3xl pl-2 transition-colors">Logout</button>
               </div>
             ) : (
-              <Link 
-                to="/auth" 
-                className="bg-rose-500 text-white px-8 py-2.5 3xl:px-16 3xl:py-6 rounded-full font-bold 3xl:text-4xl hover:bg-rose-600 transition shadow-lg shadow-rose-100"
-              >
-                Login
-              </Link>
+              <Link to="/auth" className="bg-rose-500 text-white px-8 py-2.5 3xl:px-16 3xl:py-6 rounded-full font-bold 3xl:text-4xl hover:bg-rose-600 transition shadow-lg shadow-rose-100">Login</Link>
             )}
           </div>
 
-          {/* Mobile Toggle Button */}
+          {/* Mobile Toggle */}
           <div className="md:hidden flex items-center">
             <button onClick={() => setIsOpen(!isOpen)} className="text-gray-600 p-2">
               <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                {isOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
+                {isOpen ? <path d="M6 18L18 6M6 6l12 12" strokeWidth={2} /> : <path d="M4 6h16M4 12h16M4 18h16" strokeWidth={2} />}
               </svg>
             </button>
           </div>
@@ -142,10 +107,15 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Menu Dropdown */}
-      <div className={`md:hidden bg-white border-t transition-all duration-300 overflow-hidden ${isOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'}`}>
+      <div className={`md:hidden bg-white border-t transition-all duration-300 overflow-hidden ${isOpen ? 'max-h-[700px] opacity-100' : 'max-h-0 opacity-0'}`}>
         <div className="px-6 py-6 space-y-4 shadow-xl">
           <Link to="/" onClick={() => setIsOpen(false)} className="block text-gray-700 font-semibold text-lg border-b pb-2">Home</Link>
           <Link to="/matches" onClick={() => setIsOpen(false)} className="block text-gray-700 font-semibold text-lg border-b pb-2">Find Matches</Link>
+          <Link to="/stories" onClick={() => setIsOpen(false)} className="block text-gray-700 font-semibold text-lg border-b pb-2">Success Stories</Link>
+          
+          {/* MOBILE PLANS LINK */}
+          <Link to="/plans" onClick={() => setIsOpen(false)} className="block text-gray-700 font-semibold text-lg border-b pb-2">Membership Plans</Link>
+          
           {isLoggedIn ? (
             <>
               <Link to="/search" onClick={() => setIsOpen(false)} className="block text-rose-600 font-bold text-lg border-b pb-2">Search Filters</Link>

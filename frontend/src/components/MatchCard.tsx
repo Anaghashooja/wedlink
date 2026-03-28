@@ -8,8 +8,10 @@ interface UserProfile {
   religion?: string;
   age?: number;
   photos?: string[];
-  location?: string;
+   location?: string;
   motherTongue?: string;
+  photoPrivacy?: boolean;
+  connectionStatus?: 'none' | 'pending' | 'accepted' | 'rejected';
 }
 
 interface MatchCardProps {
@@ -18,11 +20,12 @@ interface MatchCardProps {
 
 export const MatchCard: React.FC<MatchCardProps> = ({ user }) => {
   const [loading, setLoading] = useState(false);
-  const [isSent, setIsSent] = useState(false);
+  const [isSent, setIsSent] = useState(user.connectionStatus === 'pending');
 
   const handleConnect = async () => {
     const token = localStorage.getItem('token');
     if (!token) return alert("Please login first");
+
 
     setLoading(true);
     try {
@@ -44,22 +47,31 @@ export const MatchCard: React.FC<MatchCardProps> = ({ user }) => {
       setLoading(false);
     }
   };
-
+const shouldBlur = user.photoPrivacy === true && user.connectionStatus !== 'accepted'; 
   return (
     <div className="group bg-white rounded-[2rem] 3xl:rounded-[3.5rem] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-rose-50 flex flex-col h-full">
       
       {/* PHOTO SECTION */}
       <div className="relative h-[380px] 3xl:h-[600px] overflow-hidden">
         <Link to={`/profile/${user._id}`}>
+          <div className="relative overflow-hidden">
           <img
-            src={user.photos && user.photos.length > 0 
-              ? user.photos[0] 
-              : `https://ui-avatars.com/api/?name=${user.name}&background=ffe4e6&color=e11d48&size=512`
-            }
-            alt={user.name}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            src={user.photos?.[0]}
+            className={`w-full h-full object-cover transition-all duration-700 
+              ${shouldBlur ? 'blur-2xl scale-110 grayscale' : 'group-hover:scale-105'}`} 
           />
-        </Link>
+          
+          {/* PRIVACY OVERLAY */}
+          {shouldBlur && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20 backdrop-blur-sm">
+               <span className="material-symbols-outlined text-white text-4xl 3xl:text-8xl mb-2">lock</span>
+               <p className="text-white text-[10px] 3xl:text-2xl font-bold uppercase tracking-widest text-center px-4">
+                 Photo visible only to <br/> Accepted Connections
+               </p>
+            </div>
+          )}
+        </div>
+      </Link>
         
         {/* Verification Badge */}
         <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 3xl:px-6 3xl:py-3 rounded-full flex items-center gap-1 shadow-sm border border-rose-100">
