@@ -108,11 +108,18 @@ const Matches: React.FC = () => {
   useEffect(() => {
     const fetchMatches = async () => {
       try {
-        const res = await fetch('http://localhost:3000/api/auth/matches');
+        const token = localStorage.getItem('token');
+        const res = await fetch('http://localhost:3000/api/auth/matches', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        if (!res.ok) throw new Error("Failed to fetch matches");
         const data = await res.json();
         setMatches(data);
       } catch (err) {
-        console.error("Fetch failed");
+        console.error("Fetch failed", err);
       } finally {
         setLoading(false);
       }

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { upload } = require('../config/cloudinary');
-const { register, googleAuth, login, getMatches, getProfile,getPublicProfile,searchUsers,submitVerification,togglePrivacy } = require('../controllers/authController');
+const { register, googleAuth, login, getMatches, getProfile,getPublicProfile,searchUsers,submitVerification,togglePrivacy, saveFCMToken } = require('../controllers/authController');
 const { reportUser } = require('../controllers/reportController');
 const auth = require('../middleware/auth');
 // @route   POST /api/auth/register
@@ -13,8 +13,9 @@ router.post('/google', googleAuth);
 // LOGIN ROUTE
 router.post("/login", login);
 
-router.get('/matches', getMatches);
+router.get('/matches', auth, getMatches);
 
+router.put('/save-fcm-token', auth, saveFCMToken);
 router.get('/me', auth, getProfile);
 router.get("/user/:id", auth, getPublicProfile);
 router.post('/report/:id', auth, reportUser); 

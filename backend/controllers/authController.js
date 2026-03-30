@@ -231,6 +231,17 @@ const submitVerification = async (req, res) => {
         res.status(500).send("Server Error");
     }
 };
+const saveFCMToken = async (req, res) => {
+    try {
+        const { fcmToken } = req.body;
+        const user = await User.findById(req.user.id);
+        user.fcmToken = fcmToken;
+        await user.save();
+        res.json({ msg: "FCM token saved successfully" });
+    } catch (err) {
+        res.status(500).send("Server Error");
+    }
+};  
 const togglePrivacy=async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
@@ -248,5 +259,6 @@ module.exports = {
     getPublicProfile,
     searchUsers,
     submitVerification,
-    togglePrivacy
+    saveFCMToken,
+    togglePrivacy   
 };
