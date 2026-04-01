@@ -15,6 +15,7 @@ import Chat from './pages/Chat';
 import Search from './pages/Search';
 import Plans from './pages/Plans';
 import SuccessStories from './pages/SuccessStories';
+import AdminDashboard from './pages/AdminDashboard';
 import { requestForToken, onMessageListener } from "./firebase";
 function App() {
  const [toast, setToast] = React.useState({ show: false, title: '', message: '', type: 'info' as any });
@@ -75,6 +76,7 @@ function App() {
           <Route path="/search" element={<Search />} />
           <Route path="/plans" element={<Plans />} />
           <Route path="/stories" element={<SuccessStories />} />
+          <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
 
         {/* Optional: Footer can go here */}

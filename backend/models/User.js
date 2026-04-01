@@ -25,6 +25,11 @@ const UserSchema = new mongoose.Schema({
     type: Boolean, 
     default: false // By default, photos are visible
   },
+  role: {
+  type: String,
+  enum: ['user', 'admin'],
+  default: 'user'
+},
   isVerified: { type: Boolean, default: false },
   verificationStatus: { 
     type: String, 

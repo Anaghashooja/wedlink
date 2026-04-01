@@ -60,6 +60,7 @@ mongoose.connect(process.env.MONGODB_URI)
  app.use('/api/messages', require('./routes/message'));
  app.use('/api/stories', require('./routes/story'));
  app.use('/api/membership', require('./routes/membership'));
+ app.use('/api/admin', require('./routes/admin'));
 app.get("/", (req, res) => {
     res.send("Hello World!");
 });
