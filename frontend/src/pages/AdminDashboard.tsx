@@ -5,16 +5,29 @@ const AdminDashboard = () => {
   const [pendingStories, setPendingStories] = useState<any[]>([]);
 
   const fetchData = async () => {
-    const token = localStorage.getItem('token');
-    const resStats = await fetch('http://localhost:3000/api/admin/stats', {
-        headers: { 'Authorization': `Bearer ${token}` }
-    });
-    setStats(await resStats.json());
+    try {
+      const token = localStorage.getItem('token');
+      const resStats = await fetch('http://localhost:3000/api/admin/stats', {
+          headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (resStats.ok) {
+        setStats(await resStats.json());
+      }
 
-    const resStories = await fetch('http://localhost:3000/api/admin/stories/pending', {
-        headers: { 'Authorization': `Bearer ${token}` }
-    });
-    setPendingStories(await resStories.json());
+      const resStories = await fetch('http://localhost:3000/api/admin/stories/pending', {
+          headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const storiesData = await resStories.json();
+      if (resStories.ok && Array.isArray(storiesData)) {
+        setPendingStories(storiesData);
+      } else {
+        console.error("Error fetching stories:", storiesData);
+        setPendingStories([]);
+      }
+    } catch (err) {
+      console.error("Network error:", err);
+      setPendingStories([]);
+    }
   };
 
   useEffect(() => { fetchData(); }, []);
@@ -65,7 +78,7 @@ const AdminDashboard = () => {
                 </tr>
               </thead>
               <tbody className="divide-y">
-                {pendingStories.map(story => (
+                {Array.isArray(pendingStories) && pendingStories.map(story => (
                   <tr key={story._id}>
                     <td className="py-4 font-bold">{story.coupleNames}</td>
                     <td className="py-4">{story.location}</td>
