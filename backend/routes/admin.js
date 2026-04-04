@@ -5,6 +5,8 @@ const admin = require('../middleware/admin');
 const powerBiAuth = require('../middleware/powerBiAuth');
 const User = require('../models/User');
 const Story = require('../models/Story');
+const { getPendingVerifications, handleVerification, getStoryStats, deleteStory, getAnalyticsData, getStats } = require('../controllers/adminController');
+
 const { getPowerBIData } = require('../controllers/analyticsController');
 // 1. Get Dashboard Stats
 router.get('/stats', auth, admin, async (req, res) => {
@@ -31,6 +33,14 @@ router.put('/stories/approve/:id', auth, admin, async (req, res) => {
 router.get('/data-for-bi', powerBiAuth, async (req, res) => {
     const data = await User.find().select('gender religion profession annualIncome membership createdAt');
     res.json(data);
-});
+})
+router.get('/stories/stats', auth, admin, getStoryStats);
+router.get('/stories/pending', auth, admin, getPendingStories);
+router.put('/stories/approve/:id', auth, admin, approveStory);
+router.delete('/stories/delete/:id', auth, admin, deleteStory);
+router.get('/verifications/pending', auth, admin, getPendingVerifications);
+router.put('/verifications/handle/:id', auth, admin, handleVerification);
+router.get('/analytics', auth, admin, getAnalyticsData);
+router.get('/stats', auth, admin, getStats);
 router.get('/bi-data', powerBiAuth, getPowerBIData);
 module.exports = router; 

@@ -36,11 +36,17 @@ const register = async (req, res) => {
         user.password = await bcrypt.hash(password, salt);
 
         await user.save();
+        const io = req.app.get("socketio");
+io.emit("admin_update_stats"); // Notify all admins to refresh their stats
 
         // 5. Generate JWT
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+        const token = jwt.sign(
+            { id: user._id, role: user.role }, 
+            process.env.JWT_SECRET, 
+            { expiresIn: '1d' }
+        );
 
-        res.json({ token, user: { id: user._id, name: user.name } });
+        res.json({ token, user: { id: user._id, name: user.name, role: user.role } });
 
     } catch (err) {
         console.error(err);
@@ -74,9 +80,13 @@ const googleAuth = async (req, res) => {
         }
 
         // 3. Generate our own JWT
-        const ourToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+        const ourToken = jwt.sign(
+            { id: user._id, role: user.role }, 
+            process.env.JWT_SECRET, 
+            { expiresIn: '1d' }
+        );
 
-        res.json({ token: ourToken, user: { id: user._id, name: user.name } });
+        res.json({ token: ourToken, user: { id: user._id, name: user.name, role: user.role } });
 
     } catch (err) {
         console.error(err);
@@ -102,11 +112,15 @@ const login = async (req, res) => {
         }
 
         // 3. Generate Token
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign(
+            { id: user._id, role: user.role }, 
+            process.env.JWT_SECRET, 
+            { expiresIn: '7d' }
+        );
 
         res.json({
             token,
-            user: { id: user._id, name: user.name }
+            user: { id: user._id, name: user.name, role: user.role }
         });
 
     } catch (err) {
@@ -250,6 +264,35 @@ const togglePrivacy=async (req, res) => {
         res.json({ photoPrivacy: user.photoPrivacy, msg: "Privacy updated" });
     } catch (err) { res.status(500).send("Error updating privacy"); }
 };
+const getPendingVerifications=async (req, res) => {
+    try {
+        const pendingUsers = await User.find({ verificationStatus: 'pending' })
+            .select('name email verificationDoc photos profession religion createdAt');
+        res.json(pendingUsers);
+    } catch (err) {
+        res.status(500).send("Server Error");
+    }
+};
+const handleVerification=async (req, res) => {
+    try {
+        const { status, note } = req.body; // status: 'verified' or 'rejected'
+        const isApproved = status === 'verified';
+
+        const user = await User.findByIdAndUpdate(
+            req.params.id,
+            { 
+                verificationStatus: status,
+                isVerified: isApproved,
+                moderationNote: note // Add this field to your model if you want to store admin notes
+            },
+            { new: true }
+        );
+
+        res.json({ msg: `User has been ${status}`, user });
+    } catch (err) {
+        res.status(500).send("Update Error");
+    }
+};
 module.exports = {
     register,
     googleAuth,
@@ -260,5 +303,7 @@ module.exports = {
     searchUsers,
     submitVerification,
     saveFCMToken,
-    togglePrivacy   
+    togglePrivacy ,
+    getPendingVerifications,
+    handleVerification    
 };

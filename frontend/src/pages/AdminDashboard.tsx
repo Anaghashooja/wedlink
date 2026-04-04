@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { io } from "socket.io-client";
+import { Link } from 'react-router-dom';
+
+ 
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState<any>(null);
@@ -30,7 +34,6 @@ const AdminDashboard = () => {
     }
   };
 
-  useEffect(() => { fetchData(); }, []);
 
   const approveStory = async (id: string) => {
     await fetch(`http://localhost:3000/api/admin/stories/approve/${id}`, {
@@ -39,6 +42,22 @@ const AdminDashboard = () => {
     });
     fetchData(); // Refresh
   };
+  useEffect(() => {
+  // 1. Initial fetch
+  fetchData();
+
+  // 2. Real-time listener
+  const socket = io("http://localhost:3000");
+  
+  socket.on("admin_update_stats", () => {
+    console.log("New registration detected! Refreshing dashboard...");
+    fetchData(); // This re-runs your API calls automatically
+  });
+
+  return () => {
+    socket.disconnect();
+  };
+}, []);
 
   return (
     <div className="min-h-screen bg-gray-100 flex font-inter">
@@ -48,8 +67,8 @@ const AdminDashboard = () => {
         <h2 className="text-2xl 3xl:text-6xl font-bold mb-10 text-rose-500">Wedlink Admin</h2>
         <nav className="space-y-4 3xl:space-y-12 flex-grow">
           <button className="w-full text-left p-3 rounded-xl bg-slate-800 3xl:text-4xl">Overview</button>
-          <button className="w-full text-left p-3 rounded-xl hover:bg-slate-800 3xl:text-4xl">Verify Users</button>
-          <button className="w-full text-left p-3 rounded-xl hover:bg-slate-800 3xl:text-4xl">Verify Stories</button>
+          <button className="w-full text-left p-3 rounded-xl hover:bg-slate-800 3xl:text-4xl"><Link to="/admin/verify">Verify Users</Link></button>
+          <button className="w-full text-left p-3 rounded-xl hover:bg-slate-800 3xl:text-4xl"><Link to="/admin/stories">Verify Stories</Link></button>
           <button className="w-full text-left p-3 rounded-xl hover:bg-slate-800 3xl:text-4xl">Reports Control</button>
         </nav>
         <button className="mt-auto text-slate-400 3xl:text-3xl">Back to Site</button>

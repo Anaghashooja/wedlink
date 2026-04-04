@@ -7,8 +7,24 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation(); 
   
+  // 1. Get User Data from Token
   const token = localStorage.getItem('token');
   const isLoggedIn = !!token;
+  
+  let role = 'user';
+  let userId = null;
+  
+  if (token) {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      role = payload.role || 'user';
+      userId = payload.id;
+    } catch (e) {
+      console.error("Token error");
+    }
+  }
+
+  const isAdmin = isLoggedIn && role === 'admin';
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -17,81 +33,91 @@ const Navbar = () => {
   };
 
   const [unreadCount, setUnreadCount] = useState(0);
-  const userId = token ? JSON.parse(atob(token.split('.')[1])).id : null;
 
+  // User-only socket effect
   useEffect(() => {
-    if (!userId) return;
+    if (!userId || isAdmin) return;
     const socket = io("http://localhost:3000");
     socket.emit("join", userId);
-    socket.on("new_interest", (data) => {
-      setUnreadCount((prev) => prev + 1);
-    });
+    socket.on("new_interest", () => setUnreadCount((prev) => prev + 1));
     return () => { socket.disconnect(); };
-  }, [userId]);
+  }, [userId, isAdmin]);
 
+  // User-only fetch count effect
   useEffect(() => {
+    if (!token || isAdmin) return;
     const fetchCount = async () => {
-      if (!token) return;
       try {
         const res = await fetch('http://localhost:3000/api/requests/count', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
         setUnreadCount(data.count);
-      } catch (err) {
-        console.error("Count fetch failed");
-      }
+      } catch (err) { console.error("Count failed"); }
     };
     fetchCount();
-  }, [token, location.pathname]);
+  }, [token, location.pathname, isAdmin]);
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50 font-inter">
       <div className="max-w-7xl 2xl:max-w-[1800px] 3xl:max-w-[2400px] mx-auto px-4 md:px-12 3xl:px-24">
         <div className="flex justify-between h-20 3xl:h-48 items-center">
           
-          {/* Logo */}
-          <Link to="/" className="flex items-center" onClick={() => setIsOpen(false)}>
-            <img src="/logo.png" alt="Logo" className="h-12 md:h-16 3xl:h-32 w-auto object-contain" />
-          </Link>
+          {/* Logo & Admin Badge */}
+          <div className="flex items-center gap-4">
+            <Link to="/" className="flex items-center" onClick={() => setIsOpen(false)}>
+              <img src="/logo.png" alt="Logo" className="h-12 md:h-16 3xl:h-32 w-auto object-contain" />
+            </Link>
+            {isAdmin && (
+              <span className="bg-slate-800 text-white px-3 py-1 3xl:px-8 3xl:py-4 rounded-lg text-[10px] 3xl:text-3xl font-bold uppercase tracking-widest">
+                Admin Panel
+              </span>
+            )}
+          </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex space-x-4 lg:space-x-8 3xl:space-x-16 items-center">
-            <Link to="/" className="text-gray-700 hover:text-rose-500 font-semibold 3xl:text-4xl transition-colors">Home</Link>
-            <Link to="/matches" className="text-gray-700 hover:text-rose-500 font-semibold 3xl:text-4xl transition-colors">Find Matches</Link>
-            <Link to="/stories" className="text-gray-700 hover:text-rose-500 font-semibold 3xl:text-4xl transition-colors">Stories</Link>
+          <div className="hidden md:flex space-x-6 lg:space-x-8 3xl:space-x-16 items-center">
             
-            {/* ADDED PLANS LINK HERE */}
-            <Link to="/plans" className="text-gray-700 hover:text-rose-500 font-semibold 3xl:text-4xl transition-colors">Plans</Link>
-            
+            {/* COMMON LINKS (GUESTS & USERS ONLY) */}
+            {!isAdmin && (
+              <>
+                <Link to="/" className="nav-link">Home</Link>
+                <Link to="/matches" className="nav-link">Find Matches</Link>
+                <Link to="/stories" className="nav-link">Stories</Link>
+                <Link to="/plans" className="nav-link">Plans</Link>
+              </>
+            )}
+
+            {/* ADMIN-ONLY LINK */}
+            {isAdmin && (
+              <Link to="/admin" className="text-slate-800 font-bold 3xl:text-4xl hover:text-rose-500 transition-colors">
+                Dashboard Overview
+              </Link>
+            )}
+
             {isLoggedIn ? (
-              <div className="flex items-center space-x-3 lg:space-x-4 3xl:space-x-12">
-                <Link to="/search" className="group flex items-center gap-2 p-1 pr-4 rounded-full bg-rose-50 border border-rose-100 hover:bg-rose-500 transition-all duration-300 shadow-sm">
-                  <div className="w-10 h-10 3xl:w-20 3xl:h-20 rounded-full bg-rose-500 flex items-center justify-center text-white group-hover:bg-white group-hover:text-rose-500 transition-colors">
-                    <svg className="w-5 h-5 3xl:w-10 3xl:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                  </div>
-                  <span className="text-rose-700 group-hover:text-white font-bold 3xl:text-3xl uppercase text-[10px] tracking-wider">Search</span>
-                </Link>
+              <div className="flex items-center space-x-4 3xl:space-x-12">
+                
+                {/* USER-ONLY PILLS */}
+                {!isAdmin && (
+                  <>
+                    <NavPill to="/search" icon="search" label="Search" />
+                    <NavPill to="/messages" icon="mail" label="Inbox" count={unreadCount} />
+                    <NavPill to="/profile" icon="person" label="Profile" />
+                  </>
+                )}
 
-                <Link to="/messages" className="group flex items-center gap-2 p-1 pr-4 rounded-full bg-rose-50 border border-rose-100 hover:bg-rose-500 transition-all duration-300 relative shadow-sm">
-                  <div className="w-10 h-10 3xl:w-20 3xl:h-20 rounded-full bg-rose-500 flex items-center justify-center text-white group-hover:bg-white group-hover:text-rose-500 transition-colors relative">
-                    <svg className="w-5 h-5 3xl:w-10 3xl:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
-                    {unreadCount > 0 && <span className="absolute -top-1 -right-1 flex h-4 w-4 3xl:h-8 3xl:w-8"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span><span className="relative inline-flex rounded-full h-4 w-4 3xl:h-8 3xl:w-8 bg-rose-600 border border-white text-[8px] 3xl:text-lg text-white items-center justify-center font-bold">{unreadCount}</span></span>}
-                  </div>
-                  <span className="text-rose-700 group-hover:text-white font-bold 3xl:text-3xl uppercase text-[10px] tracking-wider">Inbox</span>
-                </Link>
-
-                <Link to="/profile" className="group flex items-center gap-2 p-1 pr-4 rounded-full bg-rose-50 border border-rose-100 hover:bg-rose-500 transition-all duration-300 shadow-sm">
-                  <div className="w-10 h-10 3xl:w-20 3xl:h-20 rounded-full bg-rose-500 flex items-center justify-center text-white group-hover:bg-white group-hover:text-rose-500 transition-colors">
-                    <svg className="w-5 h-5 3xl:w-10 3xl:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                  </div>
-                  <span className="text-rose-700 group-hover:text-white font-bold 3xl:text-3xl uppercase text-[10px] tracking-wider">Profile</span>
-                </Link>
-
-                <button onClick={handleLogout} className="text-gray-400 hover:text-rose-600 font-bold 3xl:text-3xl pl-2 transition-colors">Logout</button>
+                <button 
+                  onClick={handleLogout} 
+                  className="text-gray-400 hover:text-rose-600 font-bold 3xl:text-4xl pl-2 transition-colors"
+                >
+                  Logout
+                </button>
               </div>
             ) : (
-              <Link to="/auth" className="bg-rose-500 text-white px-8 py-2.5 3xl:px-16 3xl:py-6 rounded-full font-bold 3xl:text-4xl hover:bg-rose-600 transition shadow-lg shadow-rose-100">Login</Link>
+              <Link to="/auth" className="bg-rose-500 text-white px-8 py-2.5 3xl:px-16 3xl:py-6 rounded-full font-bold 3xl:text-4xl hover:bg-rose-600 transition shadow-lg">
+                Login
+              </Link>
             )}
           </div>
 
@@ -109,27 +135,39 @@ const Navbar = () => {
       {/* Mobile Menu Dropdown */}
       <div className={`md:hidden bg-white border-t transition-all duration-300 overflow-hidden ${isOpen ? 'max-h-[700px] opacity-100' : 'max-h-0 opacity-0'}`}>
         <div className="px-6 py-6 space-y-4 shadow-xl">
-          <Link to="/" onClick={() => setIsOpen(false)} className="block text-gray-700 font-semibold text-lg border-b pb-2">Home</Link>
-          <Link to="/matches" onClick={() => setIsOpen(false)} className="block text-gray-700 font-semibold text-lg border-b pb-2">Find Matches</Link>
-          <Link to="/stories" onClick={() => setIsOpen(false)} className="block text-gray-700 font-semibold text-lg border-b pb-2">Success Stories</Link>
-          
-          {/* MOBILE PLANS LINK */}
-          <Link to="/plans" onClick={() => setIsOpen(false)} className="block text-gray-700 font-semibold text-lg border-b pb-2">Membership Plans</Link>
-          
-          {isLoggedIn ? (
+          {!isAdmin ? (
             <>
-              <Link to="/search" onClick={() => setIsOpen(false)} className="block text-rose-600 font-bold text-lg border-b pb-2">Search Filters</Link>
-              <Link to="/messages" onClick={() => setIsOpen(false)} className="block text-rose-600 font-bold text-lg border-b pb-2">Inbox ({unreadCount})</Link>
-              <Link to="/profile" onClick={() => setIsOpen(false)} className="block text-rose-600 font-bold text-lg border-b pb-2">My Profile</Link>
-              <button onClick={handleLogout} className="block w-full text-left text-gray-400 font-bold text-lg pt-2">Logout</button>
+              <Link to="/" onClick={() => setIsOpen(false)} className="mobile-link">Home</Link>
+              <Link to="/matches" onClick={() => setIsOpen(false)} className="mobile-link">Find Matches</Link>
+              {isLoggedIn && (
+                <>
+                  <Link to="/search" onClick={() => setIsOpen(false)} className="mobile-link text-rose-600">Search</Link>
+                  <Link to="/messages" onClick={() => setIsOpen(false)} className="mobile-link text-rose-600">Inbox ({unreadCount})</Link>
+                </>
+              )}
             </>
           ) : (
-            <Link to="/auth" onClick={() => setIsOpen(false)} className="block bg-rose-500 text-white text-center py-4 rounded-2xl font-bold text-lg">Login / Register</Link>
+            <Link to="/admin" onClick={() => setIsOpen(false)} className="mobile-link font-bold text-slate-800">Admin Dashboard</Link>
           )}
+          
+          <button onClick={isLoggedIn ? handleLogout : () => navigate('/auth')} className={`w-full text-center py-4 rounded-2xl font-bold text-lg ${isLoggedIn ? 'bg-gray-100 text-gray-500' : 'bg-rose-500 text-white'}`}>
+            {isLoggedIn ? 'Logout' : 'Login / Register'}
+          </button>
         </div>
       </div>
     </nav>
   );
 };
+
+// Helper Components for Cleaner Code
+const NavPill = ({ to, icon, label, count }: any) => (
+  <Link to={to} className="group flex items-center gap-2 p-1 pr-4 rounded-full bg-rose-50 border border-rose-100 hover:bg-rose-500 transition-all duration-300 relative shadow-sm">
+    <div className="w-10 h-10 3xl:w-20 3xl:h-20 rounded-full bg-rose-500 flex items-center justify-center text-white group-hover:bg-white group-hover:text-rose-500 transition-colors relative">
+      <span className="material-symbols-outlined 3xl:text-5xl">{icon}</span>
+      {count > 0 && <span className="absolute -top-1 -right-1 flex h-4 w-4 3xl:h-8 3xl:w-8"><span className="animate-ping absolute h-full w-full rounded-full bg-rose-400 opacity-75"></span><span className="relative flex rounded-full h-4 w-4 3xl:h-8 3xl:w-8 bg-rose-600 border border-white text-[8px] 3xl:text-lg items-center justify-center font-bold">{count}</span></span>}
+    </div>
+    <span className="text-rose-700 group-hover:text-white font-bold 3xl:text-3xl uppercase text-[10px] tracking-wider">{label}</span>
+  </Link>
+);
 
 export default Navbar;
