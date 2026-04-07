@@ -1,0 +1,5 @@
+[dotenv@17.3.1] injecting env (14) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+Firebase Admin initialized successfully.
+Example app listening on port 3000
+MongoDB connected
+^C

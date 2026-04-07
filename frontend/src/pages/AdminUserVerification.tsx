@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import AdminSidebar from '../components/AdminSidebar';
 
 const UserVerification: React.FC = () => {
   const [applicants, setApplicants] = useState<any[]>([]);
@@ -43,6 +44,7 @@ const UserVerification: React.FC = () => {
 
   return (
     <div className="ml-64 min-h-screen bg-[#fbf9fa] font-inter">
+      <AdminSidebar />
       {/* HEADER */}
       <header className="h-20 sticky top-0 z-40 flex justify-between items-center px-12 bg-white/80 backdrop-blur-md border-b border-stone-100">
         <h2 className="text-3xl 3xl:text-6xl font-serif font-bold text-[#6f2434]">Verification Queue</h2>

@@ -5,7 +5,7 @@ const admin = require('../middleware/admin');
 const powerBiAuth = require('../middleware/powerBiAuth');
 const User = require('../models/User');
 const Story = require('../models/Story');
-const { getPendingVerifications, handleVerification, getStoryStats, deleteStory, getAnalyticsData, getStats } = require('../controllers/adminController');
+const { getPendingVerifications, handleUserVerification, getStoryStats, deleteStory, getAnalyticsData, getStats,getReportedChats,getReportTranscript,handleUserAction, getPendingStories,approveStory } = require('../controllers/adminController');
 
 const { getPowerBIData } = require('../controllers/analyticsController');
 // 1. Get Dashboard Stats
@@ -39,8 +39,12 @@ router.get('/stories/pending', auth, admin, getPendingStories);
 router.put('/stories/approve/:id', auth, admin, approveStory);
 router.delete('/stories/delete/:id', auth, admin, deleteStory);
 router.get('/verifications/pending', auth, admin, getPendingVerifications);
-router.put('/verifications/handle/:id', auth, admin, handleVerification);
+router.put('/verifications/handle/:id', auth, admin, handleUserVerification);
 router.get('/analytics', auth, admin, getAnalyticsData);
 router.get('/stats', auth, admin, getStats);
 router.get('/bi-data', powerBiAuth, getPowerBIData);
+router.get('/reports', auth, admin, getReportedChats);
+router.get('/reports/transcript/:convId', auth, admin, getReportTranscript); 
+
+router.put('/users/action/:userId', auth, admin, handleUserAction);
 module.exports = router; 

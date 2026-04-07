@@ -1,0 +1,9 @@
+﻿src/firebase.ts(15,39): error TS6133: 'userId' is declared but its value is never read.
+src/pages/AdminDashboard.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/pages/AdminReportedChats.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/pages/Auth.tsx(41,9): error TS6133: 'handleFileChange' is declared but its value is never read.
+src/pages/Auth.tsx(56,9): error TS6133: 'removeImage' is declared but its value is never read.
+src/pages/Chat.tsx(83,9): error TS6133: 'token' is declared but its value is never read.
+src/pages/Plans.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/pages/Plans.tsx(5,10): error TS6133: 'loading' is declared but its value is never read.
+src/pages/SuccessStories.tsx(2,1): error TS6133: 'Link' is declared but its value is never read.

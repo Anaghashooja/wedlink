@@ -1,9 +1,11 @@
 import { PowerBIEmbed } from 'powerbi-client-react';
 import { models } from 'powerbi-client';
+import AdminSidebar from '../components/AdminSidebar';
 
 const Analytics = () => {
   return (
-    <div className="p-10 3xl:p-24 bg-gray-100 min-h-screen">
+    <div className="ml-64 p-10 3xl:p-24 bg-gray-100 min-h-screen">
+      <AdminSidebar />
       <div className="mb-10">
         <h1 className="text-4xl 3xl:text-8xl font-bold text-slate-800">Business Intelligence</h1>
         <p className="text-gray-500 3xl:text-4xl">Real-time platform analytics and user trends</p>

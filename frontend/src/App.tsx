@@ -19,6 +19,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import UserVerification from './pages/AdminUserVerification';
 import { requestForToken, onMessageListener } from "./firebase";
 import StoriesModeration from './pages/AdminStoriesModeration';
+import ReportedChats from './pages/AdminReportedChats';
 function App() {
  const [toast, setToast] = React.useState({ show: false, title: '', message: '', type: 'info' as any });
 
@@ -81,6 +82,7 @@ function App() {
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/verify" element={<UserVerification />} />
           <Route path="/admin/stories" element={<StoriesModeration />} />
+          <Route path="/admin/reports" element={<ReportedChats/>}/>
         </Routes>
 
         {/* Optional: Footer can go here */}

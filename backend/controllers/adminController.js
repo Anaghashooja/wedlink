@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const Story = require('../models/Story');
 const Report = require('../models/Report');
+const Message = require('../models/Message');
 
 // 1. GET DASHBOARD STATS
 exports.getStats = async (req, res) => {
@@ -101,4 +102,39 @@ exports.deleteStory = async (req, res) => {
     } catch (err) {
         res.status(500).send("Deletion failed");
     }
+};
+exports.getReportedChats = async (req, res) => {
+    try {
+        const reports = await Report.find({ status: 'pending' })
+            .populate('reporter', 'name photos')
+            .populate('reportedUser', 'name photos')
+            .sort({ createdAt: -1 });
+        res.json(reports);
+    } catch (err) { res.status(500).send("Server Error"); }
+};
+
+// 2. Get chat transcript for a specific report
+exports.getReportTranscript = async (req, res) => {
+    try {
+        const messages = await Message.find({ conversationId: req.params.convId })
+            .sort({ createdAt: 1 });
+        res.json(messages);
+    } catch (err) { res.status(500).send("Error fetching transcript"); }
+};
+
+// 3. Take Action (Warn, Suspend, Ban)
+exports.handleUserAction = async (req, res) => {
+    try {
+        const { action, reportId } = req.body; // 'warn', 'suspend', 'ban'
+        const userId = req.params.userId;
+
+        if (action === 'ban') {
+            await User.findByIdAndUpdate(userId, { role: 'banned' });
+        }
+        
+        // Mark report as resolved
+        await Report.findByIdAndUpdate(reportId, { status: 'resolved' });
+
+        res.json({ msg: `Action '${action}' applied and report resolved.` });
+    } catch (err) { res.status(500).send("Action failed"); }
 };

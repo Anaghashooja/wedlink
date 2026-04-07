@@ -38,27 +38,6 @@ const Auth: React.FC = () => {
     } catch (err) { setError('Unable to connect to server'); } finally { setLoading(false); }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const fileList = Array.from(e.target.files);
-      if (images.length + fileList.length > 6) {
-        setError("You can only upload a maximum of 6 photos.");
-        return;
-      }
-      const newImages = [...images, ...fileList];
-      setImages(newImages);
-      const newPreviews = fileList.map(file => URL.createObjectURL(file));
-      setPreviews([...previews, ...newPreviews]);
-      setError('');
-    }
-  };
-
-  const removeImage = (index: number) => {
-    const updatedImages = images.filter((_, i) => i !== index);
-    const updatedPreviews = previews.filter((_, i) => i !== index);
-    setImages(updatedImages);
-    setPreviews(updatedPreviews);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

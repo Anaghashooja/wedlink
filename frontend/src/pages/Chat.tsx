@@ -80,9 +80,7 @@ const Chat: React.FC = () => {
       socket.emit('send_message', { room, sender: myId, receiver: otherId, text: "Sent an image", image: data.url, createdAt: new Date() });
     } catch (err) { alert("Upload failed"); } finally { setUploading(false); }
   };
-  const token = localStorage.getItem('token');
  
-
 const handleSend = () => {
   if (!inputText.trim() || !myId) return;
 

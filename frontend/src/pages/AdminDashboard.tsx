@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { io } from "socket.io-client";
 import { Link } from 'react-router-dom';
+import AdminSidebar from '../components/AdminSidebar';
 
  
 
@@ -60,19 +61,9 @@ const AdminDashboard = () => {
 }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex font-inter">
+    <div className="min-h-screen bg-gray-100 ml-64 flex flex-col font-inter">
       
-      {/* 1. LEFT SIDEBAR (Dark Professional) */}
-      <aside className="w-64 3xl:w-[500px] bg-slate-900 text-white p-8 3xl:p-20 flex flex-col shrink-0">
-        <h2 className="text-2xl 3xl:text-6xl font-bold mb-10 text-rose-500">Wedlink Admin</h2>
-        <nav className="space-y-4 3xl:space-y-12 flex-grow">
-          <button className="w-full text-left p-3 rounded-xl bg-slate-800 3xl:text-4xl">Overview</button>
-          <button className="w-full text-left p-3 rounded-xl hover:bg-slate-800 3xl:text-4xl"><Link to="/admin/verify">Verify Users</Link></button>
-          <button className="w-full text-left p-3 rounded-xl hover:bg-slate-800 3xl:text-4xl"><Link to="/admin/stories">Verify Stories</Link></button>
-          <button className="w-full text-left p-3 rounded-xl hover:bg-slate-800 3xl:text-4xl">Reports Control</button>
-        </nav>
-        <button className="mt-auto text-slate-400 3xl:text-3xl">Back to Site</button>
-      </aside>
+      <AdminSidebar />
 
       {/* 2. MAIN CONTENT AREA */}
       <main className="flex-1 p-10 3xl:p-32 space-y-10 3xl:space-y-24">

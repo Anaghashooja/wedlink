@@ -12,7 +12,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
-export const requestForToken = async (userId: string) => {
+export const requestForToken = async () => {
   try {
     const permission = await Notification.requestPermission();
     if (permission === "granted") {
