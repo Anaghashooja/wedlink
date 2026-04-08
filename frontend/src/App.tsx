@@ -20,6 +20,7 @@ import UserVerification from './pages/AdminUserVerification';
 import { requestForToken, onMessageListener } from "./firebase";
 import StoriesModeration from './pages/AdminStoriesModeration';
 import ReportedChats from './pages/AdminReportedChats';
+import AdminAnalytics from './pages/AdminAnalytics';
 function App() {
  const [toast, setToast] = React.useState({ show: false, title: '', message: '', type: 'info' as any });
 
@@ -45,7 +46,7 @@ function App() {
     // 3. Register FCM Token on Login
     const token = localStorage.getItem('token');
     if (token) {
-      requestForToken("logged-in-user"); 
+      requestForToken(); 
     }
 
     // 4. Listen for Foreground FCM Messages
@@ -83,6 +84,7 @@ function App() {
           <Route path="/admin/verify" element={<UserVerification />} />
           <Route path="/admin/stories" element={<StoriesModeration />} />
           <Route path="/admin/reports" element={<ReportedChats/>}/>
+          <Route path="/admin/analytics" element={<AdminAnalytics />} />
         </Routes>
 
         {/* Optional: Footer can go here */}
