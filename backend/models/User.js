@@ -36,6 +36,12 @@ const UserSchema = new mongoose.Schema({
     enum: ['none', 'pending', 'verified', 'rejected'], 
     default: 'none' 
   },
+  notificationSettings: {
+    emailDigest: { type: Boolean, default: true },
+    pushNotifications: { type: Boolean, default: true },
+    smsAlerts: { type: Boolean, default: false }
+  },
+  blockedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   verificationDoc: { type: String },
   date: { type: Date, default: Date.now }
 });

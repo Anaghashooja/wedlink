@@ -87,3 +87,18 @@
 .animate-bounce-slow {
   animation: bounce 3s infinite;
 }
+.asymmetric-image-container {
+  border-top-left-radius: 4rem;
+  border-bottom-right-radius: 4rem;
+  border-top-right-radius: 1rem;
+  border-bottom-left-radius: 1rem;
+}
+
+@media (min-width: 2560px) {
+  .asymmetric-image-container {
+    border-top-left-radius: 10rem;
+    border-bottom-right-radius: 10rem;
+    border-top-right-radius: 2rem;
+    border-bottom-left-radius: 2rem;
+  }
+}

@@ -52,3 +52,34 @@ exports.confirmPayment = async (req, res) => {
         res.status(500).send("Payment Processing Error");
     }
 };
+// Get current subscription info
+exports.getSubscriptionInfo = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('membership membershipExpiry name email');
+        if (!user) return res.status(404).json({ msg: "User not found" });
+
+        // Mocking a transaction ID for the UI
+        const transactionId = "WDL-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+
+        res.json({
+            plan: user.membership,
+            expiry: user.membershipExpiry,
+            transactionId: transactionId,
+            amount: user.membership === 'Diamond' ? 89.00 : 29.00
+        });
+    } catch (err) {
+        res.status(500).send("Server Error");
+    }
+};
+// Log a failed payment attempt for analytics
+exports.logPaymentFailure = async (req, res) => {
+    try {
+        const { planType, reason } = req.body;
+        console.log(`Payment Failed: User ${req.user.id} tried to buy ${planType}. Reason: ${reason}`);
+        
+        // In a real app, you might save this to a 'FailedTransactions' collection
+        res.json({ success: true, msg: "Failure logged" });
+    } catch (err) {
+        res.status(500).send("Server Error");
+    }
+};

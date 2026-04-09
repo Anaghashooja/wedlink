@@ -145,6 +145,7 @@ const Navbar = () => {
                 <>
                   <Link to="/search" onClick={() => setIsOpen(false)} className="mobile-link text-rose-600">Search</Link>
                   <Link to="/messages" onClick={() => setIsOpen(false)} className="mobile-link text-rose-600">Inbox ({unreadCount})</Link>
+                  <Link to="/settings" onClick={() => setIsOpen(false)} className="mobile-link">Settings</Link>
                 </>
               )}
             </>
