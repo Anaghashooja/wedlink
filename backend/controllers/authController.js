@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const Notification = require("../models/Notification");
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const { upload } = require('../config/cloudinary');
@@ -36,6 +37,15 @@ const register = async (req, res) => {
         user.password = await bcrypt.hash(password, salt);
 
         await user.save();
+
+        const dbNotification = new Notification({
+            receiver: user._id,
+            title: "Welcome to Wedlink!",
+            message: "Your journey to forever starts here. Make sure to complete your profile.",
+            type: 'system'
+        });
+        await dbNotification.save();
+        
         const io = req.app.get("socketio");
 io.emit("admin_update_stats"); // Notify all admins to refresh their stats
 

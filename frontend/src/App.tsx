@@ -3,7 +3,8 @@ import React from 'react';
 import { socket } from './socket';
 import { useEffect } from 'react';
 import NotificationToast from './components/NotificationToast';
- import Navbar from './components/Navbar';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import Home from './pages/Home';
 import Auth from './pages/Auth'; // This is the Login/Register component we built earlier
 import Matches from './pages/Matches'; // This is the new Matches page we created
@@ -13,6 +14,7 @@ import Inbox from './pages/Inbox';
 import Messages from './pages/Messages'; 
 import Chat from './pages/Chat'; 
 import Search from './pages/Search';
+import Alerts from './pages/Alerts';
 import Plans from './pages/Plans';
 import SuccessStories from './pages/SuccessStories';
 import AdminDashboard from './pages/AdminDashboard';
@@ -25,6 +27,7 @@ import Checkout from './pages/Checkout';
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentFailed from './pages/PaymentFailed';
 import Settings from './pages/Settings';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 function App() {  
  const [toast, setToast] = React.useState({ show: false, title: '', message: '', type: 'info' as any });
 
@@ -93,9 +96,11 @@ function App() {
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/payment-failed" element={<PaymentFailed />} />
           <Route path="/settings" element={<Settings />} /> 
+          <Route path="/alerts" element={<Alerts />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
         </Routes>
 
-        {/* Optional: Footer can go here */}
+        <Footer />
       </div>
     </Router>
   );

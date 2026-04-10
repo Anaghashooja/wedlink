@@ -1,5 +1,6 @@
 const Request = require('../models/Request');
 const User = require('../models/User');
+const Notification = require('../models/Notification');
 const sendEmail = require('../config/email');
 const sendPush = require('../config/firebase');
 exports.sendRequest = async (req, res) => {
@@ -32,9 +33,19 @@ exports.sendRequest = async (req, res) => {
         await newRequest.save();
         res.json({ msg: "Interest sent successfully!" });
 
-        // 4. Notifications (Socket, Email, Push)
+        // 4. Notifications (Socket, Email, Push, DB)
         const io = req.app.get("socketio");
         const receiver = await User.findById(receiverId);
+
+        // a. In-App DB Notification
+        const dbNotification = new Notification({
+            receiver: receiverId,
+            sender: senderId,
+            title: "New Connection Request 💖",
+            message: `${senderName} wants to connect with you.`,
+            type: 'connection'
+        });
+        await dbNotification.save();
 
         // a. Real-time Socket
         io.to(receiverId).emit("new_interest", {

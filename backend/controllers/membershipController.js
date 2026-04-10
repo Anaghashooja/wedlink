@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Notification = require('../models/Notification');
 
 exports.upgradeMembership = async (req, res) => {
     try {
@@ -14,6 +15,14 @@ exports.upgradeMembership = async (req, res) => {
             { membership: plan, membershipExpiry: expiryDate },
             { returnDocument: 'after' }
         ).select("-password");
+
+        const dbNotification = new Notification({
+            receiver: userId,
+            title: `Welcome to ${plan}!`,
+            message: "Your membership has been successfully upgraded. Enjoy your exclusive features.",
+            type: 'system'
+        });
+        await dbNotification.save();
 
         res.json({
             msg: `Successfully upgraded to ${plan}!`,
@@ -42,6 +51,14 @@ exports.confirmPayment = async (req, res) => {
             },
             { new: true }
         ).select("-password");
+
+        const dbNotification = new Notification({
+            receiver: userId,
+            title: `Welcome to ${planType}!`,
+            message: "Your transaction was successful. Dive into your upgraded experience.",
+            type: 'system'
+        });
+        await dbNotification.save();
 
         res.json({
             success: true,

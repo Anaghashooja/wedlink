@@ -2,6 +2,7 @@ const User = require('../models/User');
 const Story = require('../models/Story');
 const Report = require('../models/Report');
 const Message = require('../models/Message');
+const Notification = require('../models/Notification');
 
 // 1. GET DASHBOARD STATS
 exports.getStats = async (req, res) => {
@@ -45,6 +46,14 @@ exports.handleUserVerification = async (req, res) => {
         user.isVerified = (status === 'verified');
         // Optional: you can store the note in the user model if you added that field
         await user.save();
+
+        const dbNotification = new Notification({
+            receiver: user._id,
+            title: "Verification Update",
+            message: `Your account has been ${status}. ${note ? note : ''}`,
+            type: 'verification'
+        });
+        await dbNotification.save();
 
         res.json({ msg: `User ${status} successfully`, user });
     } catch (err) {
