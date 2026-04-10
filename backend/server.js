@@ -62,6 +62,8 @@ mongoose.connect(process.env.MONGODB_URI)
  app.use('/api/membership', require('./routes/membership'));
  app.use('/api/admin', require('./routes/admin'));
  app.use('/api/user', require('./routes/user'));  
+ app.use('/api/notifications', require('./routes/notification'));
+ app.use('/api/policy', require('./routes/policy'));
 app.get("/", (req, res) => {
     res.send("Hello World!");
 });
