@@ -14,7 +14,7 @@ const Settings: React.FC = () => {
   // Fetch User Data
   const fetchUser = async () => {
     try {
-      const res = await fetch('http://localhost:3000/api/auth/me', {
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/auth/me', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -25,7 +25,7 @@ const Settings: React.FC = () => {
   // Fetch Blocked Users
   const fetchBlocked = async () => {
     try {
-      const res = await fetch('http://localhost:3000/api/user/blocked-list', {
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/user/blocked-list', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -43,7 +43,7 @@ const Settings: React.FC = () => {
   }, [activeTab]);
 
   const handleUnblock = async (id: string) => {
-    const res = await fetch(`http://localhost:3000/api/user/unblock/${id}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/user/unblock/${id}`, {
       method: 'PUT',
       headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -58,7 +58,7 @@ const Settings: React.FC = () => {
     
     setIsActionLoading(true);
     try {
-      const res = await fetch('http://localhost:3000/api/user/settings/password', {
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/user/settings/password', {
         method: 'PUT',
         headers: { 
           'Authorization': `Bearer ${token}`,
@@ -78,7 +78,7 @@ const Settings: React.FC = () => {
 
   const handleNotifyToggle = async (key: string) => {
     const newSettings = { ...user.notificationSettings, [key]: !user.notificationSettings[key] };
-    const res = await fetch('http://localhost:3000/api/user/settings/notifications', {
+    const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/user/settings/notifications', {
       method: 'PUT',
       headers: { 
         'Authorization': `Bearer ${token}`,
@@ -91,7 +91,7 @@ const Settings: React.FC = () => {
 
   const handleDeleteAccount = async () => {
     if (window.confirm("ARE YOU SURE? This will permanently delete your Wedlink profile and all matches.")) {
-      const res = await fetch('http://localhost:3000/api/user/settings/account', {
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/user/settings/account', {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

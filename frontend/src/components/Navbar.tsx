@@ -37,7 +37,7 @@ const Navbar = () => {
   // User-only socket effect
   useEffect(() => {
     if (!userId || isAdmin) return;
-    const socket = io("http://localhost:3000");
+    const socket = io((import.meta.env.VITE_API_URL || 'http://localhost:3000') + "");
     socket.emit("join", userId);
     socket.on("new_interest", () => setUnreadCount((prev) => prev + 1));
     return () => { socket.disconnect(); };
@@ -48,7 +48,7 @@ const Navbar = () => {
     if (!token || isAdmin) return;
     const fetchCount = async () => {
       try {
-        const res = await fetch('http://localhost:3000/api/requests/count', {
+        const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/requests/count', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();

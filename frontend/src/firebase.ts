@@ -22,7 +22,7 @@ export const requestForToken = async () => {
       });
       
       if (token) {
-        await fetch('http://localhost:3000/api/auth/save-fcm-token', {
+        await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/auth/save-fcm-token', {
           method: 'PUT',
           headers: { 
             'Content-Type': 'application/json',

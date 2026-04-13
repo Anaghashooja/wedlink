@@ -13,7 +13,7 @@ const SuccessStories: React.FC = () => {
 
   const fetchStories = async () => {
     try {
-      const res = await fetch('http://localhost:3000/api/stories');
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/stories');
       const data = await res.json();
       setStories(data);
     } catch (err) { console.error("Failed to load stories"); } 
@@ -34,7 +34,7 @@ const SuccessStories: React.FC = () => {
     data.append('photos', file);
 
     try {
-      const res = await fetch('http://localhost:3000/api/stories/submit', {
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/stories/submit', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
         body: data

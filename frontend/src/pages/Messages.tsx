@@ -9,7 +9,7 @@ const MessagesPage: React.FC = () => {
     const fetchConversations = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:3000/api/messages/conversations', {
+        const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/messages/conversations', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();

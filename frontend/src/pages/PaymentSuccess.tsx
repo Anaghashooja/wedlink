@@ -10,7 +10,7 @@ const PaymentSuccess = () => {
     const fetchStatus = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:3000/api/membership/status', {
+        const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/membership/status', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const result = await res.json();

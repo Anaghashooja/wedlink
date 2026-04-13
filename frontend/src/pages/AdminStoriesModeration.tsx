@@ -12,8 +12,8 @@ const StoriesModeration: React.FC = () => {
       const headers = { 'Authorization': `Bearer ${token}` };
       
       const [resStories, resStats] = await Promise.all([
-        fetch('http://localhost:3000/api/admin/stories/pending', { headers }),
-        fetch('http://localhost:3000/api/admin/stories/stats', { headers })
+        fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/admin/stories/pending', { headers }),
+        fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/admin/stories/stats', { headers })
       ]);
 
       setStories(await resStories.json());
@@ -29,7 +29,7 @@ const StoriesModeration: React.FC = () => {
 
   const handleApprove = async (id: string) => {
     const token = localStorage.getItem('token');
-    await fetch(`http://localhost:3000/api/admin/stories/approve/${id}`, {
+    await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/admin/stories/approve/${id}`, {
       method: 'PUT',
       headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -39,7 +39,7 @@ const StoriesModeration: React.FC = () => {
   const handleDelete = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this story?")) return;
     const token = localStorage.getItem('token');
-    await fetch(`http://localhost:3000/api/admin/stories/delete/${id}`, {
+    await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/admin/stories/delete/${id}`, {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${token}` }
     });

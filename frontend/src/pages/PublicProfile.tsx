@@ -13,7 +13,7 @@ const [btnLoading, setBtnLoading] = useState(false);
     const fetchUser = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`http://localhost:3000/api/auth/user/${id}`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/auth/user/${id}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
@@ -31,7 +31,7 @@ const [btnLoading, setBtnLoading] = useState(false);
   setBtnLoading(true);
   try {
     const token = localStorage.getItem('token');
-    const res = await fetch(`http://localhost:3000/api/requests/send/${id}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/requests/send/${id}`, {
       method: 'POST',
       headers: { 
         'Authorization': `Bearer ${token}`,

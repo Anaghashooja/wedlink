@@ -16,7 +16,7 @@ const Search: React.FC = () => {
     setLoading(true);
     const query = new URLSearchParams(filters).toString();
     try {
-      const res = await fetch(`http://localhost:3000/api/auth/search?${query}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/auth/search?${query}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       const data = await res.json();

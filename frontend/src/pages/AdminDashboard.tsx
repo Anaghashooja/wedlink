@@ -12,14 +12,14 @@ const AdminDashboard = () => {
   const fetchData = async () => {
     try {
       const token = localStorage.getItem('token');
-      const resStats = await fetch('http://localhost:3000/api/admin/stats', {
+      const resStats = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/admin/stats', {
           headers: { 'Authorization': `Bearer ${token}` }
       });
       if (resStats.ok) {
         setStats(await resStats.json());
       }
 
-      const resStories = await fetch('http://localhost:3000/api/admin/stories/pending', {
+      const resStories = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/admin/stories/pending', {
           headers: { 'Authorization': `Bearer ${token}` }
       });
       const storiesData = await resStories.json();
@@ -37,7 +37,7 @@ const AdminDashboard = () => {
 
 
   const approveStory = async (id: string) => {
-    await fetch(`http://localhost:3000/api/admin/stories/approve/${id}`, {
+    await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/admin/stories/approve/${id}`, {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
     });
@@ -48,7 +48,7 @@ const AdminDashboard = () => {
   fetchData();
 
   // 2. Real-time listener
-  const socket = io("http://localhost:3000");
+  const socket = io((import.meta.env.VITE_API_URL || 'http://localhost:3000') + "");
   
   socket.on("admin_update_stats", () => {
     console.log("New registration detected! Refreshing dashboard...");

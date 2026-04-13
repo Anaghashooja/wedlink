@@ -8,7 +8,7 @@ const Inbox: React.FC = () => {
   const fetchRequests = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:3000/api/requests/received', {
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/requests/received', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -25,7 +25,7 @@ const Inbox: React.FC = () => {
   const handleAction = async (id: string, status: 'accepted' | 'rejected') => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:3000/api/requests/update/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/requests/update/${id}`, {
         method: 'PUT',
         headers: { 
           'Authorization': `Bearer ${token}`,

@@ -10,7 +10,7 @@ const Profile = () => {
   const fetchProfile = async () => {
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch('http://localhost:3000/api/auth/me', {
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/auth/me', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -29,7 +29,7 @@ const Profile = () => {
   const handleTogglePrivacy = async () => {
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch('http://localhost:3000/api/auth/privacy', {
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/auth/privacy', {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -50,7 +50,7 @@ const Profile = () => {
     formData.append('photos', e.target.files[0]);
 
     try {
-      const res = await fetch('http://localhost:3000/api/auth/verify', {
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/auth/verify', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
         body: formData

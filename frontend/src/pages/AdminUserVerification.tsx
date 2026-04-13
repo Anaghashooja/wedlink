@@ -9,7 +9,7 @@ const UserVerification: React.FC = () => {
   const fetchApplicants = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:3000/api/admin/verifications/pending', {
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/admin/verifications/pending', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -26,7 +26,7 @@ const UserVerification: React.FC = () => {
   const handleAction = async (id: string, status: 'verified' | 'rejected') => {
     try {
       const token = localStorage.getItem('token');
-      await fetch(`http://localhost:3000/api/admin/verifications/handle/${id}`, {
+      await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/admin/verifications/handle/${id}`, {
         method: 'PUT',
         headers: { 
           'Authorization': `Bearer ${token}`,

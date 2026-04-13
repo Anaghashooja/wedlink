@@ -1,0 +1,15 @@
+﻿src/pages/AdminAnalytics.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+src/pages/AdminDashboard.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/pages/AdminDashboard.tsx(3,1): error TS6133: 'Link' is declared but its value is never read.
+src/pages/AdminReportedChats.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/pages/Alerts.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/pages/Auth.tsx(16,18): error TS6133: 'setImages' is declared but its value is never read.
+src/pages/Auth.tsx(17,10): error TS6133: 'previews' is declared but its value is never read.
+src/pages/Auth.tsx(17,20): error TS6133: 'setPreviews' is declared but its value is never read.
+src/pages/Checkout.tsx(1,27): error TS6133: 'useEffect' is declared but its value is never read.
+src/pages/Checkout.tsx(2,34): error TS6133: 'Link' is declared but its value is never read.
+src/pages/Checkout.tsx(32,13): error TS6133: 'data' is declared but its value is never read.
+src/pages/PaymentFailed.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+src/pages/PaymentSuccess.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/pages/PaymentSuccess.tsx(2,23): error TS6133: 'Link' is declared but its value is never read.
+src/pages/SuccessStories.tsx(2,1): error TS6133: 'Link' is declared but its value is never read.

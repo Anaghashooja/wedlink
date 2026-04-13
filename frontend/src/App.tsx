@@ -11,6 +11,7 @@ import Matches from './pages/Matches'; // This is the new Matches page we create
 import Profile from './pages/Profile';
 import PublicProfile from './pages/PublicProfile';
 import Inbox from './pages/Inbox';
+import TermsOfService from './pages/TermsOfService';
 import Messages from './pages/Messages'; 
 import Chat from './pages/Chat'; 
 import Search from './pages/Search';
@@ -98,6 +99,7 @@ function App() {
           <Route path="/settings" element={<Settings />} /> 
           <Route path="/alerts" element={<Alerts />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path='/terms' element={<TermsOfService />} />
         </Routes>
 
         <Footer />

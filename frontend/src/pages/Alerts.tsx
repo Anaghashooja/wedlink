@@ -7,7 +7,7 @@ const Alerts = () => {
 
   const fetchAlerts = async () => {
     const token = localStorage.getItem('token');
-    const res = await fetch('http://localhost:3000/api/notifications', {
+    const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/notifications', {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     const data = await res.json();

@@ -9,7 +9,7 @@ const ReportedChats = () => {
 
   const fetchReports = async () => {
     const token = localStorage.getItem('token');
-    const res = await fetch('http://localhost:3000/api/admin/reports', {
+    const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/admin/reports', {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     const data = await res.json();
@@ -20,7 +20,7 @@ const ReportedChats = () => {
   const viewTranscript = async (report: any) => {
     setSelectedReport(report);
     const token = localStorage.getItem('token');
-    const res = await fetch(`http://localhost:3000/api/admin/reports/transcript/${report.conversationId}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/admin/reports/transcript/${report.conversationId}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     setTranscript(await res.json());
@@ -29,7 +29,7 @@ const ReportedChats = () => {
   const handleAction = async (action: string) => {
     if (!window.confirm(`Are you sure you want to ${action} this user?`)) return;
     const token = localStorage.getItem('token');
-    await fetch(`http://localhost:3000/api/admin/users/action/${selectedReport.reportedUser._id}`, {
+    await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/admin/users/action/${selectedReport.reportedUser._id}`, {
       method: 'PUT',
       headers: { 
         'Authorization': `Bearer ${token}`,

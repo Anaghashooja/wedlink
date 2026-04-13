@@ -4,7 +4,7 @@ const PrivacyPolicy: React.FC = () => {
   const [meta, setMeta] = useState<any>(null);
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/policy')
+    fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/policy')
       .then(res => res.json())
       .then(data => setMeta(data));
   }, []);

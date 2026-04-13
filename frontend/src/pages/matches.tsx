@@ -23,7 +23,7 @@ const Matches: React.FC = () => {
     const fetchMatches = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:3000/api/auth/matches', {
+        const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/auth/matches', {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
