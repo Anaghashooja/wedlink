@@ -143,7 +143,19 @@ const login = async (req, res) => {
 const getMatches = async (req, res) => {
     try {
         const Request = require('../models/Request');
-        const users = await User.find().select("-password").lean();
+        
+        // Fetch current user to determine opposite gender
+        const currentUser = await User.findById(req.user.id);
+        const mongoose = require('mongoose');
+        
+        let query = { _id: { $ne: new mongoose.Types.ObjectId(req.user.id) } };
+        if (currentUser && currentUser.gender) {
+            const oppositeStr = currentUser.gender.toLowerCase() === 'male' ? 'Female' : 'Male';
+            // Use regex for case-insensitive matching just in case
+            query.gender = { $regex: new RegExp(`^${oppositeStr}$`, 'i') };
+        }
+
+        const users = await User.find(query).select("-password").lean();
         
         // Enhance each user with connection status relative to the requester
         const usersWithStatus = await Promise.all(users.map(async (u) => {
@@ -199,7 +211,15 @@ const getPublicProfile = async (req, res) => {
 const searchUsers = async (req, res) => {
     try {
         const { minAge, maxAge, religion, profession, minIncome, hobbies } = req.query;
-        let query = { _id: { $ne: req.user.id } }; // Exclude the current user
+        const mongoose = require('mongoose');
+        let query = { _id: { $ne: new mongoose.Types.ObjectId(req.user.id) } }; // Exclude the current user
+
+        // Opposite Gender Filtering
+        const currentUser = await User.findById(req.user.id);
+        if (currentUser && currentUser.gender) {
+            const oppositeStr = currentUser.gender.toLowerCase() === 'male' ? 'Female' : 'Male';
+            query.gender = { $regex: new RegExp(`^${oppositeStr}$`, 'i') };
+        }
 
         // 1. Age Logic (Calculated from Date of Birth)
         if (minAge || maxAge) {
