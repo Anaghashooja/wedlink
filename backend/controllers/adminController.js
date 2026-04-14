@@ -27,7 +27,7 @@ exports.getStats = async (req, res) => {
 exports.getPendingVerifications = async (req, res) => {
     try {
         const users = await User.find({ verificationStatus: 'pending' })
-            .select('name email profession religion verificationDoc photos createdAt');
+            .select('name email profession religion verificationDoc photos date');
         res.json(users);
     } catch (err) {
         res.status(500).send("Server Error fetching verification queue");
@@ -85,12 +85,63 @@ exports.approveStory = async (req, res) => {
     }
 };
 
-// 6. POWER BI DATA EXPORT
+// 6. POWER BI & FRONTEND KPI EXPORT
 exports.getAnalyticsData = async (req, res) => {
     try {
-        const users = await User.find().select('gender religion profession annualIncome membership createdAt');
-        res.json(users);
+        const users = await User.find().select('gender religion profession annualIncome membership createdAt verificationStatus');
+        const MatchRequest = require('../models/Request');
+        const requests = await MatchRequest.find().select('status');
+
+        // Total Users
+        const totalUsers = users.length;
+
+        // Tiers & Revenue (Base Gold at $50, Diamond at $100)
+        let tierDistribution = { free: 0, gold: 0, diamond: 0 };
+        let estimatedRevenue = 0;
+
+        // Demographics
+        let genderDistribution = { male: 0, female: 0 };
+
+        // Verification stats
+        let pendingVerifications = 0;
+
+        users.forEach(u => {
+            if (u.membership === 'Diamond') {
+                tierDistribution.diamond++;
+                estimatedRevenue += 100;
+            } else if (u.membership === 'Gold') {
+                tierDistribution.gold++;
+                estimatedRevenue += 50;
+            } else {
+                tierDistribution.free++;
+            }
+
+            if (u.gender && u.gender.toLowerCase() === 'male') genderDistribution.male++;
+            if (u.gender && u.gender.toLowerCase() === 'female') genderDistribution.female++;
+            
+            if (u.verificationStatus === 'pending') {
+                pendingVerifications++;
+            }
+        });
+
+        // Match Conversion Logic 
+        // Total accepted / total requests
+        let acceptedRequests = 0;
+        requests.forEach(r => {
+             if (r.status === 'accepted') acceptedRequests++;
+        });
+        const matchConversion = requests.length > 0 ? ((acceptedRequests / requests.length) * 100).toFixed(1) : 0;
+
+        res.json({
+            totalUsers,
+            tierDistribution,
+            genderDistribution,
+            estimatedRevenue,
+            matchConversion,
+            pendingVerifications
+        });
     } catch (err) {
+        console.error(err);
         res.status(500).send("Error exporting data");
     }
 };

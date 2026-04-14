@@ -32,7 +32,7 @@ const Alerts = () => {
   if (loading) return <div className="text-center py-20 3xl:text-6xl text-rose-500 italic">Reading your archive...</div>;
 
   return (
-    <div className="bg-[#fff8f4] min-h-screen font-inter pb-32 selection:bg-rose-100">
+    <div className="bg-[#fff8f4] min-h-screen pb-32 selection:bg-rose-100">
       <main className="pt-24 3xl:pt-48 px-6 max-w-2xl 3xl:max-w-5xl mx-auto">
         
         {/* Header Section */}

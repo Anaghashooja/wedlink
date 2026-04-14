@@ -49,7 +49,7 @@ const StoriesModeration: React.FC = () => {
   if (loading) return <div className="ml-64 p-20 3xl:text-6xl text-rose-900 font-serif italic">Loading Moderation Queue...</div>;
 
   return (
-    <div className="ml-64 min-h-screen bg-[#fbf9fa] font-inter">
+    <div className="ml-64 min-h-screen bg-[#fbf9fa]">
       <AdminSidebar />
       {/* 1. TOP HEADER */}
       <header className="h-20 sticky top-0 z-40 flex justify-between items-center px-12 bg-white/80 backdrop-blur-md border-b border-stone-100">

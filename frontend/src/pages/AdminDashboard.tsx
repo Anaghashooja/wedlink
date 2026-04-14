@@ -61,7 +61,7 @@ const AdminDashboard = () => {
 }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 ml-64 flex flex-col font-inter">
+    <div className="min-h-screen bg-gray-100 ml-64 flex flex-col">
       
       <AdminSidebar />
 

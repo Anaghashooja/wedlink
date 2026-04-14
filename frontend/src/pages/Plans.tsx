@@ -14,7 +14,7 @@ const Plans: React.FC = () => {
   };
 
   return (
-    <div className="bg-[#fff8f4] min-h-screen font-inter pb-20 selection:bg-rose-100">
+    <div className="bg-[#fff8f4] min-h-screen pb-20 selection:bg-rose-100">
       <main className="pt-28 pb-32 max-w-7xl 3xl:max-w-[2400px] mx-auto px-6">
         
         {/* HERO SECTION */}

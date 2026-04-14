@@ -1,9 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { PowerBIEmbed } from 'powerbi-client-react';
 import { models } from 'powerbi-client';
 import AdminSidebar from '../components/AdminSidebar';
 
 const Analytics = () => {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/admin/analytics', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const result = await res.json();
+        setData(result);
+      } catch (err) {
+        console.error("Failed to fetch analytics", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAnalytics();
+  }, []);
+
   return (
     <div className="ml-64 min-h-screen bg-surface text-on-surface font-body pb-10">
       <AdminSidebar />
@@ -30,7 +51,7 @@ const Analytics = () => {
         {/* Page Title & Filters */}
         <section className="flex flex-col md:flex-row justify-between items-end gap-6">
           <div>
-            <h2 className="font-headline serif text-4xl font-bold text-on-surface">Reports & Analytics</h2>
+            <h2 className=" serif text-4xl font-bold text-on-surface">Reports & Analytics</h2>
             <p className="text-stone-500 mt-2 font-label">Global performance overview and user behavior metrics.</p>
           </div>
           <div className="flex items-center gap-3 p-1.5 bg-surface-container-low rounded-xl">
@@ -55,35 +76,35 @@ const Analytics = () => {
         {/* KPI Cards */}
         <section className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="bg-surface-container-lowest p-6 rounded-xl shadow-[0_32px_64px_-12px_rgba(27,28,29,0.06)] border border-outline-variant/5">
-            <p className="text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Monthly Active Users</p>
-            <h3 className="font-headline serif text-3xl font-bold text-primary">24,812</h3>
+            <p className="text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Total Active Users</p>
+            <h3 className=" serif text-3xl font-bold text-primary">{loading ? '...' : data?.totalUsers || 0}</h3>
             <div className="mt-4 flex items-center gap-2 text-green-600">
               <span className="material-symbols-outlined text-sm">trending_up</span>
-              <span className="text-xs font-semibold">+12.4% vs prev</span>
+              <span className="text-xs font-semibold">Live Database</span>
             </div>
           </div>
           <div className="bg-surface-container-lowest p-6 rounded-xl shadow-[0_32px_64px_-12px_rgba(27,28,29,0.06)] border border-outline-variant/5">
             <p className="text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Match Conversion</p>
-            <h3 className="font-headline serif text-3xl font-bold text-primary">68.2%</h3>
+            <h3 className=" serif text-3xl font-bold text-primary">{loading ? '...' : data?.matchConversion || 0}%</h3>
             <div className="mt-4 flex items-center gap-2 text-rose-900">
               <span className="material-symbols-outlined text-sm">trending_up</span>
-              <span className="text-xs font-semibold">+4.1% vs prev</span>
+              <span className="text-xs font-semibold">Accepted requests</span>
             </div>
           </div>
           <div className="bg-surface-container-lowest p-6 rounded-xl shadow-[0_32px_64px_-12px_rgba(27,28,29,0.06)] border border-outline-variant/5">
-            <p className="text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Revenue Growth</p>
-            <h3 className="font-headline serif text-3xl font-bold text-primary">$142.5k</h3>
+            <p className="text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Estimated Revenue</p>
+            <h3 className=" serif text-3xl font-bold text-primary">${loading ? '...' : data?.estimatedRevenue?.toLocaleString() || 0}</h3>
             <div className="mt-4 flex items-center gap-2 text-stone-400">
               <span className="material-symbols-outlined text-sm">remove</span>
-              <span className="text-xs font-semibold">Stable</span>
+              <span className="text-xs font-semibold">Based on tiers</span>
             </div>
           </div>
           <div className="bg-surface-container-lowest p-6 rounded-xl shadow-[0_32px_64px_-12px_rgba(27,28,29,0.06)] border border-outline-variant/5">
-            <p className="text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Avg. Verification</p>
-            <h3 className="font-headline serif text-3xl font-bold text-primary">4.2h</h3>
+            <p className="text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Pending Verifications</p>
+            <h3 className=" serif text-3xl font-bold text-primary">{loading ? '...' : data?.pendingVerifications || 0}</h3>
             <div className="mt-4 flex items-center gap-2 text-green-600">
-              <span className="material-symbols-outlined text-sm">trending_down</span>
-              <span className="text-xs font-semibold">-15% time reduction</span>
+              <span className="material-symbols-outlined text-sm">front_hand</span>
+              <span className="text-xs font-semibold">Awaiting action</span>
             </div>
           </div>
         </section>
@@ -92,7 +113,7 @@ const Analytics = () => {
         <section className="bg-surface-container-lowest p-8 rounded-xl shadow-[0_32px_64px_-12px_rgba(27,28,29,0.06)] border border-outline-variant/5 relative overflow-hidden">
           <div className="flex justify-between items-center mb-10">
             <div>
-              <h4 className="font-headline serif text-xl font-bold">Comprehensive PowerBI Analytics</h4>
+              <h4 className=" serif text-xl font-bold">Comprehensive PowerBI Analytics</h4>
               <p className="text-sm text-stone-500">Deep dive into matrimonial metrics via connected PowerBI instance.</p>
             </div>
           </div>
@@ -129,33 +150,33 @@ const Analytics = () => {
         {/* Grid of Secondary Charts */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="bg-surface-container-low p-8 rounded-xl">
-            <h5 className="font-headline serif text-lg font-bold mb-6">User Tier Distribution</h5>
+            <h5 className=" serif text-lg font-bold mb-6">User Tier Distribution</h5>
             <div className="space-y-6">
               <div>
                 <div className="flex justify-between text-xs font-bold uppercase mb-2">
                   <span>Diamond Elite</span>
-                  <span>18%</span>
+                  <span>{data?.tierDistribution?.diamond || 0}</span>
                 </div>
                 <div className="h-2 w-full bg-white/50 rounded-full overflow-hidden">
-                  <div className="h-full bg-primary" style={{ width: '18%' }}></div>
+                  <div className="h-full bg-primary transition-all duration-1000" style={{ width: `${((data?.tierDistribution?.diamond || 0) / Math.max(1, data?.totalUsers || 1)) * 100}%` }}></div>
                 </div>
               </div>
               <div>
                 <div className="flex justify-between text-xs font-bold uppercase mb-2">
                   <span>Gold Premium</span>
-                  <span>42%</span>
+                  <span>{data?.tierDistribution?.gold || 0}</span>
                 </div>
                 <div className="h-2 w-full bg-white/50 rounded-full overflow-hidden">
-                  <div className="h-full bg-primary-container" style={{ width: '42%' }}></div>
+                  <div className="h-full bg-primary-container transition-all duration-1000" style={{ width: `${((data?.tierDistribution?.gold || 0) / Math.max(1, data?.totalUsers || 1)) * 100}%` }}></div>
                 </div>
               </div>
               <div>
                 <div className="flex justify-between text-xs font-bold uppercase mb-2">
                   <span>Standard Free</span>
-                  <span>40%</span>
+                  <span>{data?.tierDistribution?.free || 0}</span>
                 </div>
                 <div className="h-2 w-full bg-white/50 rounded-full overflow-hidden">
-                  <div className="h-full bg-stone-300" style={{ width: '40%' }}></div>
+                  <div className="h-full bg-stone-300 transition-all duration-1000" style={{ width: `${((data?.tierDistribution?.free || 0) / Math.max(1, data?.totalUsers || 1)) * 100}%` }}></div>
                 </div>
               </div>
             </div>
@@ -163,14 +184,16 @@ const Analytics = () => {
 
           <div className="bg-surface-container-low p-8 rounded-xl flex flex-col items-center">
             <div className="w-full">
-              <h5 className="font-headline serif text-lg font-bold mb-6">Gender Demographics</h5>
+              <h5 className=" serif text-lg font-bold mb-6">Gender Demographics</h5>
             </div>
             <div className="relative w-48 h-48 flex items-center justify-center">
               <div className="w-full h-full rounded-full border-[16px] border-rose-900/10 flex items-center justify-center">
                 <div className="w-32 h-32 rounded-full border-[24px] border-rose-900 border-t-secondary-container border-l-secondary-container transform rotate-45"></div>
               </div>
               <div className="absolute text-center">
-                <span className="font-headline serif text-2xl font-bold text-rose-900">48:52</span>
+                <span className=" serif text-2xl font-bold text-rose-900">
+                  {data ? `${data.genderDistribution?.male || 0}:${data.genderDistribution?.female || 0}` : '...'}
+                </span>
                 <p className="text-[10px] text-stone-500 uppercase font-bold tracking-tighter">Male/Female</p>
               </div>
             </div>
@@ -187,7 +210,7 @@ const Analytics = () => {
           </div>
 
           <div className="bg-surface-container-low p-8 rounded-xl overflow-hidden relative min-h-[300px]">
-            <h5 className="font-headline serif text-lg font-bold mb-2">Regional Activity</h5>
+            <h5 className=" serif text-lg font-bold mb-2">Regional Activity</h5>
             <p className="text-xs text-stone-500 mb-6">Top performing metropolitan areas</p>
             <div className="absolute bottom-0 left-0 right-0 top-24 bg-cover bg-center opacity-40 grayscale" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuAy4mQHWpf9nQf5aC1CGjZcBPN8m_6fr_OWDEhAcex5X4Hj3FSsQYJ2UkoqFRg4HOi7sZ6FJZy2UhrZCo4KYAPaTuti3q6URKxY2PE_KJYjIQ-FPxzNWZbSb89KAdg_cOcJ34ekq4pFRAI-FKIAkm_A7umL7wQMdaSvOlFPPPZMrIniEHZwmiVDowiWBnkQFASheCmJT8U2ZvVl3btm3k1ACLLSvm7sAKwOoOR5P-N0QlHJbwczlffYJY_21YBKSEozBLhuxecSzK-S')" }}></div>
             <div className="relative z-10 space-y-3 mt-4">
@@ -210,7 +233,7 @@ const Analytics = () => {
         {/* Generated Reports Section */}
         <section className="space-y-6">
           <div className="flex justify-between items-center border-b border-stone-200 pb-4">
-            <h4 className="font-headline serif text-2xl font-bold">Generated Reports</h4>
+            <h4 className=" serif text-2xl font-bold">Generated Reports</h4>
             <button className="text-xs font-bold uppercase tracking-widest text-primary hover:text-primary-container transition-colors">Generate New Audit</button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

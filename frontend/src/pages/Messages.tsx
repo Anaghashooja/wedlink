@@ -31,7 +31,7 @@ const MessagesPage: React.FC = () => {
   );
 
   return (
-    <div className="bg-white text-gray-900 min-h-screen pb-32 font-inter">
+    <div className="bg-white text-gray-900 min-h-screen pb-32">
       
       {/* 1. BRANDED HEADER WITH LOGO */}
       <header className="fixed top-0 w-full z-50 bg-white shadow-sm border-b border-rose-50">

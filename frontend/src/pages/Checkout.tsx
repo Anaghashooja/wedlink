@@ -43,7 +43,7 @@ const Checkout = () => {
   };
 
   return (
-    <div className="bg-[#fff8f4] min-h-screen font-inter pb-20">
+    <div className="bg-[#fff8f4] min-h-screen pb-20">
       {/* 1. HEADER */}
       <header className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-rose-50 px-6 py-4 3xl:py-10">
         <div className="max-w-7xl 3xl:max-w-[2400px] mx-auto flex justify-between items-center">

@@ -103,7 +103,7 @@ const Settings: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#fff8f4] font-inter selection:bg-rose-100 pb-20">
+    <div className="min-h-screen bg-[#fff8f4] selection:bg-rose-100 pb-20">
       <main className="pt-24 3xl:pt-48 px-6 max-w-7xl 3xl:max-w-[2400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12">
         
         {/* SIDE NAVIGATION */}

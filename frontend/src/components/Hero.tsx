@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 export const Hero = () => {
   const token = localStorage.getItem('token');
   return (
-    <div className="relative overflow-hidden bg-linear-to-br from-rose-50 via-white to-rose-100 px-4 py-12 xs:py-16 md:py-24 xl:py-40 3xl:py-60 font-poppins">
+    <div className="relative overflow-hidden bg-linear-to-br from-rose-50 via-white to-rose-100 px-4 py-12 xs:py-16 md:py-24 xl:py-40 3xl:py-60">
       
       {/* Decorative Background Blobs */}
       <div className="absolute top-0 left-0 w-72 h-72 bg-rose-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
@@ -19,12 +19,12 @@ export const Hero = () => {
           
           <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-5xl lg:text-7xl xl:text-8xl 3xl:text-9xl font-extrabold text-gray-900 leading-[1.1]">
             Find your <br />
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-rose-600 to-pink-500 font-k2d">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-rose-600 to-pink-500">
               Perfect Soulmate
             </span>
           </h1>
 
-          <p className="text-base xs:text-lg md:text-xl xl:text-2xl 3xl:text-4xl text-gray-600 font-inter max-w-2xl mx-auto md:mx-0 leading-relaxed">
+          <p className="text-base xs:text-lg md:text-xl xl:text-2xl 3xl:text-4xl text-gray-600 max-w-2xl mx-auto md:mx-0 leading-relaxed">
             Where tradition meets technology. Join millions of verified profiles and start your journey toward a beautiful forever.
           </p>
 

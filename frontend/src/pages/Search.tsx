@@ -31,7 +31,7 @@ const Search: React.FC = () => {
   useEffect(() => { handleFetch(); }, []);
 
   return (
-    <div className="min-h-screen bg-rose-50/20 flex flex-col lg:flex-row font-inter">
+    <div className="min-h-screen bg-rose-50/20 flex flex-col lg:flex-row">
       
       {/* SIDEBAR FILTERS (400px on Desktop, Scaled on 3xl) */}
       <aside className="w-full lg:w-[350px] 2xl:w-[450px] 3xl:w-[700px] bg-white border-r border-rose-100 p-6 3xl:p-16 lg:sticky lg:top-20 lg:h-[calc(100vh-80px)] overflow-y-auto">

@@ -12,7 +12,7 @@ const TermsOfService: React.FC = () => {
   const navLinks = data?.sections || [];
 
   return (
-    <div className="bg-[#fff8f4] min-h-screen font-inter selection:bg-rose-100">
+    <div className="bg-[#fff8f4] min-h-screen selection:bg-rose-100">
       
       {/* 1. HERO SECTION */}
       <section className="max-w-4xl 3xl:max-w-7xl mx-auto px-8 pt-24 pb-16 3xl:pt-48 3xl:pb-32 text-center">

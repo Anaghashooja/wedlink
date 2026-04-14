@@ -61,7 +61,7 @@ const Navbar = () => {
   const isAdminRoute = location.pathname.startsWith('/admin');
 
   return (
-    <nav className={`bg-white shadow-md sticky top-0 z-50 font-inter transition-all ${isAdminRoute ? 'ml-64' : ''}`}>
+    <nav className={`bg-white shadow-md sticky top-0 z-50 transition-all ${isAdminRoute ? 'ml-64' : ''}`}>
       <div className="max-w-7xl 2xl:max-w-[1800px] 3xl:max-w-[2400px] mx-auto px-4 md:px-12 3xl:px-24">
         <div className="flex justify-between h-20 3xl:h-48 items-center">
           

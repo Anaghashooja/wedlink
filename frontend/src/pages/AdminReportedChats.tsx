@@ -46,7 +46,7 @@ const ReportedChats = () => {
   if (loading) return <div className="ml-64 p-20 3xl:text-6xl text-rose-900 font-serif italic">Loading Archive...</div>;
 
   return (
-    <div className="ml-64 flex flex-col h-screen overflow-hidden bg-[#fbf9fa] font-inter">
+    <div className="ml-64 flex flex-col h-screen overflow-hidden bg-[#fbf9fa]">
       <AdminSidebar />
       {/* HEADER */}
       <header className="bg-white border-b border-rose-50 px-12 py-6 flex justify-between items-center shrink-0">

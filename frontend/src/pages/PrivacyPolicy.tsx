@@ -10,7 +10,7 @@ const PrivacyPolicy: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-[#fff8f4] min-h-screen font-inter pb-32 selection:bg-rose-100">
+    <div className="bg-[#fff8f4] min-h-screen pb-32 selection:bg-rose-100">
       
       {/* 1. EDITORIAL HEADER */}
       <header className="pt-24 pb-16 3xl:pt-48 3xl:pb-32 text-center px-6">

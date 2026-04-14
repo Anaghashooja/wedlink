@@ -51,7 +51,7 @@ const SuccessStories: React.FC = () => {
   if (loading) return <div className="h-screen flex items-center justify-center text-rose-500 3xl:text-6xl">Loading...</div>;
 
   return (
-    <div className="bg-[#fffcfb] min-h-screen font-inter pb-24">
+    <div className="bg-[#fffcfb] min-h-screen pb-24">
       {/* HERO HEADER */}
       <section className="pt-20 pb-12 3xl:pt-40 3xl:pb-32 text-center px-6">
         <h1 className="text-4xl md:text-6xl 3xl:text-[10rem] font-serif italic text-rose-900">

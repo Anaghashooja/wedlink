@@ -27,7 +27,7 @@ const PaymentSuccess = () => {
   if (loading) return <div className="h-screen flex items-center justify-center 3xl:text-6xl text-rose-500">Confirming your union...</div>;
 
   return (
-    <div className="bg-[#fff8f4] min-h-screen font-inter pb-32 selection:bg-rose-100">
+    <div className="bg-[#fff8f4] min-h-screen pb-32 selection:bg-rose-100">
       <main className="pt-24 3xl:pt-48 pb-32 flex flex-col items-center max-w-7xl 3xl:max-w-[2400px] mx-auto px-6">
         
         {/* HERO IMAGE SECTION */}

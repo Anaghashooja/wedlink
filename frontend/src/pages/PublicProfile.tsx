@@ -60,7 +60,7 @@ const [btnLoading, setBtnLoading] = useState(false);
   const shouldBlur = user.photoPrivacy === true && user.connectionStatus !== 'accepted';
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-white font-inter">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-white">
       
       {/* LEFT SIDE (40%): Image Gallery - STICKY on Desktop */}
       <div className="lg:w-[40%] h-[50vh] lg:h-[calc(100vh-80px)] lg:sticky lg:top-20 bg-gray-100 overflow-hidden group">
@@ -105,7 +105,7 @@ const [btnLoading, setBtnLoading] = useState(false);
         {/* 1. Basic Header */}
         <div className="flex justify-between items-start border-b pb-10">
           <div>
-            <h1 className="text-4xl md:text-6xl 3xl:text-9xl font-bold text-gray-900 font-k2d">{user.name}</h1>
+            <h1 className="text-4xl md:text-6xl 3xl:text-9xl font-bold text-gray-900">{user.name}</h1>
             <p className="text-xl 3xl:text-4xl text-rose-500 font-semibold mt-2">{user.profession} • {user.religion}</p>
             <div className="flex items-center mt-4 text-gray-500 3xl:text-3xl">
               <span>📍 {user.location || 'Mumbai, India'}</span>

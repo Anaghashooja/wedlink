@@ -43,7 +43,7 @@ const UserVerification: React.FC = () => {
   if (loading) return <div className="ml-64 p-20 3xl:text-6xl text-rose-900 font-serif italic">Accessing Secure Vault...</div>;
 
   return (
-    <div className="ml-64 min-h-screen bg-[#fbf9fa] font-inter">
+    <div className="ml-64 min-h-screen bg-[#fbf9fa]">
       <AdminSidebar />
       {/* HEADER */}
       <header className="h-20 sticky top-0 z-40 flex justify-between items-center px-12 bg-white/80 backdrop-blur-md border-b border-stone-100">
@@ -60,7 +60,7 @@ const UserVerification: React.FC = () => {
         {/* SUMMARY STATS */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-8 3xl:gap-16">
           <StatBox title="Pending Total" value={applicants.length} sub="Applicants" />
-          <StatBox title="Avg. Wait Time" value="14" sub="Hours" />
+          <StatBox title="Avg. Wait Time" value={applicants.length > 0 ? Math.round(applicants.reduce((acc, curr) => acc + (Date.now() - new Date(curr.date).getTime()) / (1000 * 60 * 60), 0) / applicants.length) : 0} sub="Hours" />
           <StatBox title="System Status" value="Live" sub="Operational" />
         </section>
 

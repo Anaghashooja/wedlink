@@ -80,7 +80,7 @@ const Auth: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen lg:h-auto 2xl:h-[calc(100vh-160px)] bg-rose-50 flex items-center justify-center p-3 sm:p-6 font-inter transition-all">
+    <div className="min-h-screen lg:h-auto 2xl:h-[calc(100vh-160px)] bg-rose-50 flex items-center justify-center p-3 sm:p-6 transition-all">
       <div className={`bg-white w-full shadow-2xl overflow-hidden border border-rose-100 transition-all duration-500 flex flex-col
         ${isLogin 
           ? 'max-w-[400px] sm:max-w-md 2xl:max-w-2xl rounded-3xl 2xl:rounded-[3rem]' 
@@ -88,7 +88,7 @@ const Auth: React.FC = () => {
         }`}>
         
         <div className={`${isAdminMode && isLogin ? 'bg-slate-800' : 'bg-rose-500'} py-6 md:py-8 2xl:py-12 text-center text-white shrink-0 transition-colors duration-300`}>
-          <h2 className="text-3xl md:text-4xl 2xl:text-7xl font-bold font-k2d tracking-tight">Wedlink</h2>
+          <h2 className="text-3xl md:text-4xl 2xl:text-7xl font-bold tracking-tight">Wedlink</h2>
           <p className="text-rose-100 text-sm md:text-base 2xl:text-2xl font-light italic opacity-90 px-4">
             {isLogin ? (isAdminMode ? "Admin Control Panel" : "Welcome back") : "Create your matrimonial profile"}
           </p>

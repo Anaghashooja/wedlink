@@ -116,7 +116,7 @@ const handleSend = () => {
   };
 
   return (
-    <div className="bg-[#fff8f4] h-screen flex flex-col font-inter overflow-hidden relative">
+    <div className="bg-[#fff8f4] h-screen flex flex-col overflow-hidden relative">
       
       {/* 1. VIDEO CALL OVERLAY (JITSI) */}
       {showVideo && (

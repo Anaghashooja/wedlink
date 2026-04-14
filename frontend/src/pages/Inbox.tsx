@@ -55,7 +55,7 @@ const Inbox: React.FC = () => {
   if (loading) return <div className="text-center py-20 3xl:text-4xl text-rose-500 font-bold">Checking for new interests...</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 md:p-12 3xl:p-24 font-inter relative">
+    <div className="min-h-screen bg-gray-50 p-6 md:p-12 3xl:p-24 relative">
       
       {/* NOTIFICATION TOAST */}
       {notification && (

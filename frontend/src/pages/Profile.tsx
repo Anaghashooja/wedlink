@@ -69,7 +69,7 @@ const Profile = () => {
   if (loading) return <div className="text-center py-20 3xl:text-6xl text-rose-500 font-bold">Loading...</div>;
 
   return (
-    <div className="min-h-screen bg-[#fff8f4] font-inter pb-20">
+    <div className="min-h-screen bg-[#fff8f4] pb-20">
       {/* Profile Header */}
       <div className="relative h-64 md:h-80 3xl:h-[600px] bg-gradient-to-r from-[#6f2434] to-[#8d3b4a]">
         <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 md:left-20 md:translate-x-0">
@@ -96,7 +96,7 @@ const Profile = () => {
             <div className="flex justify-between items-start mb-8">
               <div>
                 <div className="flex items-center gap-3">
-                    <h1 className="text-3xl md:text-4xl 3xl:text-8xl font-bold text-gray-800 font-headline italic">{user?.name}</h1>
+                    <h1 className="text-3xl md:text-4xl 3xl:text-8xl font-bold text-gray-800 italic">{user?.name}</h1>
                     {user?.isVerified && <span className="text-[#775a19] font-bold text-xs 3xl:text-3xl uppercase tracking-widest bg-rose-50 px-3 py-1 rounded-full">Verified</span>}
                 </div>
                 <p className="text-rose-500 font-semibold 3xl:text-4xl mt-2 uppercase tracking-tighter">{user?.profession || 'Member'}</p>
@@ -125,7 +125,7 @@ const Profile = () => {
                 </div>
              ) : (
                 <div className="space-y-6">
-                    <h3 className="text-2xl 3xl:text-6xl font-bold text-gray-800 font-headline italic">Identity Trust Score</h3>
+                    <h3 className="text-2xl 3xl:text-6xl font-bold text-gray-800 italic">Identity Trust Score</h3>
                     <p className="text-gray-600 3xl:text-3xl">Verified profiles get <span className="text-rose-600 font-bold">3x more attention</span>.</p>
                     <div className="flex flex-col sm:flex-row gap-4">
                         <label className="flex-grow cursor-pointer flex items-center justify-center gap-3 py-4 bg-rose-900 text-white rounded-2xl font-bold 3xl:text-4xl">
@@ -165,7 +165,7 @@ const Profile = () => {
         {/* Right Sidebar */}
         <div className="space-y-6">
           <div className="bg-white p-6 3xl:p-12 rounded-[2rem] shadow-sm border border-rose-50">
-            <h3 className="text-xl 3xl:text-4xl font-bold text-gray-800 mb-6 font-headline">Gallery ({user?.photos?.length || 0}/6)</h3>
+            <h3 className="text-xl 3xl:text-4xl font-bold text-gray-800 mb-6">Gallery ({user?.photos?.length || 0}/6)</h3>
             <div className="grid grid-cols-3 gap-3 3xl:gap-6">
               {[...Array(6)].map((_, i) => (
                 <div key={i} className="aspect-square bg-rose-50 rounded-xl border-2 border-dashed border-rose-100 flex items-center justify-center overflow-hidden">
