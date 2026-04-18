@@ -5,7 +5,15 @@ const Checkout = () => {
   const { plan } = useParams(); // 'Gold' or 'Diamond'
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({ cardName: '', cardNumber: '', expiry: '', cvv: '' });
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/auth');
+    }
+  }, [navigate]);
 
   // Plan Data Mapping
   const planInfo: any = {
@@ -30,13 +38,21 @@ const Checkout = () => {
       });
       
       const data = await res.json();
-     if (res.ok) {
-    // Instead of /profile, go to the success page
-    navigate('/payment-success');
-}
+      
+      if (res.ok) {
+        navigate('/payment-success');
+      } else {
+        if (res.status === 401 || res.status === 403) {
+          setError('Session expired. Please log in again.');
+          setTimeout(() => navigate('/auth'), 2000);
+        } else {
+          setError(data.msg || 'Payment failed. Please try again.');
+        }
+      }
     } catch (err) {
-      // Redirect to failure page with plan info
-      navigate('/payment-failed', { state: { plan: plan } });
+      setError('Unable to connect to server. Please check your internet.');
+      // Keep existing logic if you want to redirect to failure page
+      // navigate('/payment-failed', { state: { plan: plan } });
     } finally {
       setLoading(false);
     }
@@ -66,6 +82,11 @@ const Checkout = () => {
             </section>
 
             <form onSubmit={handlePayment} className="space-y-6 3xl:space-y-12">
+              {error && (
+                <div className="bg-red-50 text-red-600 p-4 rounded-2xl text-center font-bold animate-pulse">
+                  {error}
+                </div>
+              )}
               {/* Trust Badges */}
               <div className="flex gap-4">
                  <Badge text="SSL Secure" icon="verified_user" />
