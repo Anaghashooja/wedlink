@@ -23,6 +23,42 @@ const PaymentSuccess = () => {
     };
     fetchStatus();
   }, []);
+  const handleDownloadReceipt = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const transactionId = data?.transactionId || "latest";
+    
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/membership/receipt/${transactionId}`,
+      {
+        headers: { 
+          'Authorization': `Bearer ${token}` 
+        }
+      }
+    );
+
+    if (!response.ok) throw new Error('Download failed');
+
+    // Convert response to blob
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    
+    // Create temporary link and trigger click
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `receipt-${transactionId}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    
+    // Cleanup
+    link.parentNode?.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error("Error downloading receipt:", err);
+    alert("Could not download receipt. Please try again later.");
+  }
+};
+
 
   if (loading) return <div className="h-screen flex items-center justify-center 3xl:text-6xl text-rose-500">Confirming your union...</div>;
 
@@ -95,10 +131,13 @@ const PaymentSuccess = () => {
 
         {/* RECEIPT LINK */}
         <div className="flex flex-col items-center gap-6 3xl:gap-12">
-           <button className="text-[#6f2434] font-bold 3xl:text-4xl flex items-center gap-3 hover:underline">
-             <span className="material-symbols-outlined 3xl:text-5xl">download</span>
-             Download Receipt (PDF)
-           </button>
+          <button 
+  onClick={handleDownloadReceipt}
+  className="text-[#6f2434] font-bold 3xl:text-4xl flex items-center gap-3 hover:underline active:scale-95 transition-transform"
+>
+  <span className="material-symbols-outlined 3xl:text-5xl">download</span>
+  Download Receipt (PDF)
+</button>
            <div className="flex items-center gap-4 text-gray-400">
              <span className="material-symbols-outlined text-sm 3xl:text-4xl" style={{fontVariationSettings: "'FILL' 1"}}>verified_user</span>
              <span className="text-[10px] 3xl:text-2xl uppercase tracking-[0.2em] font-bold">Secure 256-bit Encrypted Transaction</span>

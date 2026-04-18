@@ -100,3 +100,68 @@ exports.logPaymentFailure = async (req, res) => {
         res.status(500).send("Server Error");
     }
 };
+const PDFDocument = require('pdfkit');
+
+exports.generateReceipt = async (req, res) => {
+  try {
+    // 1. Get data (In a real app, fetch this from your DB using req.user.id)
+    // For this example, we'll assume data is passed or fetched based on user
+    const receiptData = {
+      orderId: req.params.transactionId || "WL-" + Math.floor(Math.random() * 1000000),
+      date: new Date().toLocaleDateString(),
+      plan: "Premium", // Mocked - fetch from DB
+      amount: "99.00",
+      customerName: "Valued Member"
+    };
+
+    const doc = new PDFDocument({ margin: 50 });
+
+    // Set response headers
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=receipt-${receiptData.orderId}.pdf`);
+
+    // Pipe the PDF into the response
+    doc.pipe(res);
+
+    // --- PDF DESIGN ---
+    // Header
+    doc.fillColor('#6f2434').fontSize(25).text('WEDLINK', { align: 'center' });
+    doc.fontSize(10).fillColor('#666666').text('Official Payment Receipt', { align: 'center' });
+    doc.moveDown();
+
+    // Divider
+    doc.moveTo(50, 120).lineTo(550, 120).stroke('#eeeeee');
+
+    // Details
+    doc.moveDown(2);
+    doc.fillColor('#000000').fontSize(12).text(`Date: ${receiptData.date}`);
+    doc.text(`Transaction ID: ${receiptData.orderId}`);
+    doc.moveDown();
+
+    // Table Header
+    doc.fillColor('#f9fafb').rect(50, 200, 500, 30).fill();
+    doc.fillColor('#6f2434').text('Description', 60, 210);
+    doc.text('Amount', 450, 210, { align: 'right' });
+
+    // Table Body
+    doc.fillColor('#333333').text(`${receiptData.plan} Membership Subscription`, 60, 250);
+    doc.text(`$${receiptData.amount}`, 450, 250, { align: 'right' });
+
+    // Total
+    doc.moveTo(50, 280).lineTo(550, 280).stroke('#eeeeee');
+    doc.fontSize(15).fillColor('#6f2434').text('Total Paid:', 350, 300);
+    doc.text(`$${receiptData.amount}`, 450, 300, { align: 'right' });
+
+    // Footer
+    doc.fontSize(10).fillColor('#999999').text(
+      'Thank you for choosing Wedlink. Your journey begins here.',
+      50, 700, { align: 'center', width: 500 }
+    );
+
+    doc.end();
+
+  } catch (error) {
+    console.error("PDF Gen Error:", error);
+    res.status(500).json({ message: "Error generating receipt" });
+  }
+};
