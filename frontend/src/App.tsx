@@ -29,6 +29,7 @@ import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentFailed from './pages/PaymentFailed';
 import Settings from './pages/Settings';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import ScrollToTop from './components/ScrollToTop';
 function App() {  
  const [toast, setToast] = React.useState({ show: false, title: '', message: '', type: 'info' as any });
 
@@ -69,6 +70,7 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <Navbar/>
       
       {/* GLOBAL NOTIFICATION TOAST */}
