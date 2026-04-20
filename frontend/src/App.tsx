@@ -59,7 +59,9 @@ function App() {
 
     // 4. Listen for Foreground FCM Messages
     onMessageListener().then((payload: any) => {
-      notify(payload.notification.title, payload.notification.body, "info");
+      if (payload && payload.notification) {
+        notify(payload.notification.title, payload.notification.body, "info");
+      }
     }).catch(err => console.log('failed: ', err));
 
     return () => { socket.off("new_interest"); socket.off("receive_message"); };

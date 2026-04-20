@@ -111,3 +111,9 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-family-poppins);
 }
+
+@layer components {
+  .auth-input {
+    @apply w-full px-5 py-4 border-2 border-rose-100 rounded-2xl bg-white text-gray-800 placeholder-gray-400 focus:border-rose-400 focus:ring-4 focus:ring-rose-50/50 outline-none transition-all duration-300 shadow-sm;
+  }
+}

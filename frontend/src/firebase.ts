@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import { getMessaging, getToken, onMessage, isSupported } from "firebase/messaging";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -10,13 +10,26 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
+
+// Helper to get messaging instance safely
+const getMessagingSafe = async () => {
+  try {
+    if (await isSupported()) {
+      return getMessaging(app);
+    }
+  } catch (err) {
+    console.warn("Firebase Messaging not supported in this environment:", err);
+  }
+  return null;
+};
 
 export const requestForToken = async () => {
   try {
+    const messaging = await getMessagingSafe();
+    if (!messaging) return;
+
     const permission = await Notification.requestPermission();
     if (permission === "granted") {
-      // Use the VAPID key from .env
       const token = await getToken(messaging, { 
         vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY 
       });
@@ -32,10 +45,14 @@ export const requestForToken = async () => {
         });
       }
     }
-  } catch (error) { console.error(error); }
+  } catch (error) { console.error("Error requesting FCM token:", error); }
 };
 
-export const onMessageListener = () =>
-  new Promise((resolve) => {
+export const onMessageListener = async () => {
+  const messaging = await getMessagingSafe();
+  if (!messaging) return null;
+
+  return new Promise((resolve) => {
     onMessage(messaging, (payload) => { resolve(payload); });
   });
+};

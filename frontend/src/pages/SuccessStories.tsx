@@ -94,8 +94,28 @@ const SuccessStories: React.FC = () => {
                 />
               </div>
               <div className="md:col-span-2">
-                <label className="block text-gray-400 mb-2 3xl:text-3xl font-bold">Upload a Wedding Photo</label>
-                <input type="file" className="auth-input p-2" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+                <label className="block text-gray-800 mb-3 3xl:text-4xl font-bold">Upload a Wedding Photo</label>
+                <div className="relative">
+                  <input 
+                    type="file" 
+                    id="wedding-photo"
+                    className="hidden" 
+                    accept="image/*" 
+                    onChange={(e) => setFile(e.target.files?.[0] || null)} 
+                  />
+                  <label 
+                    htmlFor="wedding-photo"
+                    className="auth-input flex items-center justify-between cursor-pointer hover:bg-rose-50/50 group"
+                  >
+                    <span className={file ? "text-gray-900 font-medium" : "text-gray-400 font-normal"}>
+                      {file ? file.name : "Choose a beautiful photo of you both..."}
+                    </span>
+                    <div className="bg-rose-100 text-rose-600 px-6 py-2.5 3xl:px-12 3xl:py-6 rounded-xl 3xl:rounded-3xl font-bold text-sm 3xl:text-3xl group-hover:bg-rose-200 transition-colors flex items-center gap-2">
+                      <span className="material-symbols-outlined text-lg 3xl:text-5xl">photo_library</span>
+                      Browse File
+                    </div>
+                  </label>
+                </div>
               </div>
             </div>
             <button 
