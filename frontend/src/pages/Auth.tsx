@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
+import { API_BASE_URL } from '../config';
 
 const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -25,7 +26,7 @@ const Auth: React.FC = () => {
   const handleGoogleSuccess = async (credentialResponse: any) => {
     setLoading(true);
     try {
-      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/auth/google', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/google`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: credentialResponse.credential }),
@@ -51,7 +52,7 @@ const Auth: React.FC = () => {
     const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
     
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}${endpoint}`, {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
         headers: isLogin ? { 'Content-Type': 'application/json' } : {},
         body: isLogin ? JSON.stringify(formData) : dataToSend,

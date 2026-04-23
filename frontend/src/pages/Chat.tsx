@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
+import { API_BASE_URL } from '../config';
 
-const socket = io((import.meta.env.VITE_API_URL || 'http://localhost:3000') + "");
+const socket = io(API_BASE_URL);
 
 const Chat: React.FC = () => {
   const { id: otherId } = useParams();
@@ -24,14 +25,14 @@ const Chat: React.FC = () => {
     if (!otherId || !myId) return;
 
     const currentToken = localStorage.getItem('token');
-
-    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/auth/user/${otherId}`, {
+    
+    fetch(`${API_BASE_URL}/api/auth/user/${otherId}`, {
       headers: { 'Authorization': `Bearer ${currentToken}` }
     }).then(res => res.json()).then(data => setOtherUser(data));
 
     const fetchHistory = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/messages/history/${otherId}`, {
+        const res = await fetch(`${API_BASE_URL}/api/messages/history/${otherId}`, {
           headers: { 'Authorization': `Bearer ${currentToken}` }
         });
         const data = await res.json();
@@ -70,7 +71,7 @@ const Chat: React.FC = () => {
     formData.append('photos', e.target.files[0]); // Using your existing 'photos' endpoint
 
     try {
-      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/auth/upload-temp', { // Create a simple upload route or reuse register logic
+      const res = await fetch(`${API_BASE_URL}/api/auth/upload-temp`, { // Create a simple upload route or reuse register logic
         method: 'POST',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
         body: formData
@@ -106,7 +107,7 @@ const handleSend = () => {
 // Removed duplicate useEffect
   const handleReport = async () => {
     if (window.confirm("Are you sure you want to report this user?")) {
-      await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/auth/report/${otherId}`, {
+      await fetch(`${API_BASE_URL}/api/auth/report/${otherId}`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });

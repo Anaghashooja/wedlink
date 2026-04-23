@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { io } from "socket.io-client";
+import { API_BASE_URL } from '../config';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,7 +38,7 @@ const Navbar = () => {
   // User-only socket effect
   useEffect(() => {
     if (!userId || isAdmin) return;
-    const socket = io((import.meta.env.VITE_API_URL || 'http://localhost:3000') + "");
+    const socket = io(API_BASE_URL);
     socket.emit("join", userId);
     socket.on("new_interest", () => setUnreadCount((prev) => prev + 1));
     return () => { socket.disconnect(); };
@@ -48,7 +49,7 @@ const Navbar = () => {
     if (!token || isAdmin) return;
     const fetchCount = async () => {
       try {
-        const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/requests/count', {
+        const res = await fetch(`${API_BASE_URL}/api/requests/count`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
@@ -83,10 +84,10 @@ const Navbar = () => {
             {/* COMMON LINKS (GUESTS & USERS ONLY) */}
             {!isAdmin && (
               <>
-                <Link to="/" className="nav-link">Home</Link>
-                <Link to="/matches" className="nav-link">Find Matches</Link>
-                <Link to="/stories" className="nav-link">Stories</Link>
-                <Link to="/plans" className="nav-link">Plans</Link>
+                <NavLink to="/" className="nav-link">Home</NavLink>
+                <NavLink to="/matches" className="nav-link">Find Matches</NavLink>
+                <NavLink to="/stories" className="nav-link">Stories</NavLink>
+                <NavLink to="/plans" className="nav-link">Plans</NavLink>
               </>
             )}
 
@@ -165,13 +166,25 @@ const Navbar = () => {
 
 // Helper Components for Cleaner Code
 const NavPill = ({ to, icon, label, count }: any) => (
-  <Link to={to} className="group flex items-center gap-2 p-1 pr-4 rounded-full bg-rose-50 border border-rose-100 hover:bg-rose-500 transition-all duration-300 relative shadow-sm">
-    <div className="w-10 h-10 3xl:w-20 3xl:h-20 rounded-full bg-rose-500 flex items-center justify-center text-white group-hover:bg-white group-hover:text-rose-500 transition-colors relative">
+  <NavLink 
+    to={to} 
+    className={({ isActive }) => `group flex items-center gap-2 p-1 pr-4 rounded-full border transition-all duration-300 relative shadow-sm ${
+      isActive 
+      ? 'bg-rose-500 border-rose-500 text-white' 
+      : 'bg-rose-50 border-rose-100 hover:bg-rose-500'
+    }`}
+  >
+    <div className={`w-10 h-10 3xl:w-20 3xl:h-20 rounded-full flex items-center justify-center transition-colors relative ${
+      // We use a nested check or simpler logic: if parent is active (via class), we change colors
+      'bg-rose-500 text-white group-[.active]:bg-white group-[.active]:text-rose-500 group-hover:bg-white group-hover:text-rose-500'
+    }`}>
       <span className="material-symbols-outlined 3xl:text-5xl">{icon}</span>
       {count > 0 && <span className="absolute -top-1 -right-1 flex h-4 w-4 3xl:h-8 3xl:w-8"><span className="animate-ping absolute h-full w-full rounded-full bg-rose-400 opacity-75"></span><span className="relative flex rounded-full h-4 w-4 3xl:h-8 3xl:w-8 bg-rose-600 border border-white text-[8px] 3xl:text-lg items-center justify-center font-bold">{count}</span></span>}
     </div>
-    <span className="text-rose-700 group-hover:text-white font-bold 3xl:text-3xl uppercase text-[10px] tracking-wider">{label}</span>
-  </Link>
+    <span className={`font-bold 3xl:text-3xl uppercase text-[10px] tracking-wider group-hover:text-white transition-colors ${
+      'text-rose-700 group-[.active]:text-white'
+    }`}>{label}</span>
+  </NavLink>
 );
 
 export default Navbar;

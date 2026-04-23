@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { io } from "socket.io-client";
 import { Link } from 'react-router-dom';
 import AdminSidebar from '../components/AdminSidebar';
+import { API_BASE_URL } from '../config';
 
  
 
@@ -12,14 +13,14 @@ const AdminDashboard = () => {
   const fetchData = async () => {
     try {
       const token = localStorage.getItem('token');
-      const resStats = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/admin/stats', {
+      const resStats = await fetch(`${API_BASE_URL}/api/admin/stats`, {
           headers: { 'Authorization': `Bearer ${token}` }
       });
       if (resStats.ok) {
         setStats(await resStats.json());
       }
 
-      const resStories = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/admin/stories/pending', {
+      const resStories = await fetch(`${API_BASE_URL}/api/admin/stories/pending`, {
           headers: { 'Authorization': `Bearer ${token}` }
       });
       const storiesData = await resStories.json();
@@ -37,7 +38,7 @@ const AdminDashboard = () => {
 
 
   const approveStory = async (id: string) => {
-    await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/admin/stories/approve/${id}`, {
+    await fetch(`${API_BASE_URL}/api/admin/stories/approve/${id}`, {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
     });
@@ -48,7 +49,7 @@ const AdminDashboard = () => {
   fetchData();
 
   // 2. Real-time listener
-  const socket = io((import.meta.env.VITE_API_URL || 'http://localhost:3000') + "");
+  const socket = io(API_BASE_URL);
   
   socket.on("admin_update_stats", () => {
     console.log("New registration detected! Refreshing dashboard...");

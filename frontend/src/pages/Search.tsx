@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
 import { MatchCard } from '../components/MatchCard'; // Refactor MatchCard to a component if possible
+import { API_BASE_URL } from '../config';
 
 const Search: React.FC = () => {
   const [matches, setMatches] = useState<any[]>([]);
@@ -16,7 +16,7 @@ const Search: React.FC = () => {
     setLoading(true);
     const query = new URLSearchParams(filters).toString();
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/auth/search?${query}`, {
+      const res = await fetch(`${API_BASE_URL}/api/auth/search?${query}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       const data = await res.json();

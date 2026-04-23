@@ -1,4 +1,4 @@
- @import "tailwindcss";
+@import "tailwindcss";
 
   @theme: {
   --breakpoint-: initial;
@@ -115,5 +115,26 @@ h1, h2, h3, h4, h5, h6 {
 @layer components {
   .auth-input {
     @apply w-full px-5 py-4 border-2 border-rose-100 rounded-2xl bg-white text-gray-800 placeholder-gray-400 focus:border-rose-400 focus:ring-4 focus:ring-rose-50/50 outline-none transition-all duration-300 shadow-sm;
+  }
+
+  .nav-link {
+    @apply relative text-gray-600 font-semibold 3xl:text-4xl transition-all duration-300 hover:text-rose-600 pb-1;
+  }
+
+  .nav-link::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-rose-500 transition-all duration-300;
+  }
+
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+
+  .nav-link.active {
+    @apply text-rose-600;
+  }
+
+  .nav-link.active::after {
+    @apply w-full;
   }
 }

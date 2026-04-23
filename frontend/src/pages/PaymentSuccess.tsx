@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 
 const PaymentSuccess = () => {
   const [data, setData] = useState<any>(null);
@@ -10,7 +10,7 @@ const PaymentSuccess = () => {
     const fetchStatus = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/membership/status', {
+        const res = await fetch(`${API_BASE_URL}/api/membership/status`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const result = await res.json();
@@ -29,7 +29,7 @@ const PaymentSuccess = () => {
     const transactionId = data?.transactionId || "latest";
     
     const response = await fetch(
-      `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/membership/receipt/${transactionId}`,
+      `${API_BASE_URL}/api/membership/receipt/${transactionId}`,
       {
         headers: { 
           'Authorization': `Bearer ${token}` 

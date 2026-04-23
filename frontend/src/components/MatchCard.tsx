@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 
 interface UserProfile {
   _id: string;
@@ -29,7 +29,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({ user }) => {
 
     setLoading(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/requests/send/${user._id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/requests/send/${user._id}`, {
         method: 'POST',
         headers: { 
             'Authorization': `Bearer ${token}`, 

@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
+import { useState, useEffect } from 'react';
 
 const MessagesPage: React.FC = () => {
   const [conversations, setConversations] = useState<any[]>([]);
@@ -9,7 +10,7 @@ const MessagesPage: React.FC = () => {
     const fetchConversations = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/messages/conversations', {
+        const res = await fetch(`${API_BASE_URL}/api/messages/conversations`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();

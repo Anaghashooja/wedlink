@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { MatchCard } from '../components/MatchCard';
 import { PageLayout } from '../components/PageLayout';
+import { API_BASE_URL } from '../config';
 
 interface UserProfile {
   _id: string;
@@ -24,7 +25,7 @@ const Matches: React.FC = () => {
     const fetchMatches = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/auth/matches', {
+        const res = await fetch(`${API_BASE_URL}/api/auth/matches`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
