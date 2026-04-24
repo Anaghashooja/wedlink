@@ -1,5 +1,6 @@
 import { MatchCard } from '../components/MatchCard'; // Refactor MatchCard to a component if possible
 import { API_BASE_URL } from '../config';
+import {useState, useEffect} from 'react';
 
 const Search: React.FC = () => {
   const [matches, setMatches] = useState<any[]>([]);

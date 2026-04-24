@@ -115,7 +115,7 @@ const MessagesPage: React.FC = () => {
                 <div className="flex-grow min-w-0">
                   <div className="flex justify-between items-baseline mb-1">
                     <h4 className="font-bold text-xl 3xl:text-6xl text-gray-800 truncate">{user.name}</h4>
-                    <span className="text-[10px] 3xl:text-2xl font-bold text-gray-400 uppercase">Today</span>
+                    <span className="text-[10px] 3xl:text-2xl font-bold text-gray-400 upperca se">Today</span>
                   </div>
                   <p className="text-sm 3xl:text-4xl text-gray-500 truncate font-medium mt-1">
                     Matched via {user.religion || 'Community'} • Click to send a message
