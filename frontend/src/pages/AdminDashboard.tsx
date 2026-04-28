@@ -1,16 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { io } from "socket.io-client";
-import { Link } from 'react-router-dom';
 import AdminSidebar from '../components/AdminSidebar';
 import { API_BASE_URL } from '../config';
 
- 
+interface Stats {
+  totalUsers: number;
+  pendingVerify: number;
+  pendingStories: number;
+}
+
+interface Story {
+  _id: string;
+  coupleNames: string;
+  location: string;
+}
 
 const AdminDashboard = () => {
-  const [stats, setStats] = useState<any>(null);
-  const [pendingStories, setPendingStories] = useState<any[]>([]);
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [pendingStories, setPendingStories] = useState<Story[]>([]);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       const resStats = await fetch(`${API_BASE_URL}/api/admin/stats`, {
@@ -34,7 +43,7 @@ const AdminDashboard = () => {
       console.error("Network error:", err);
       setPendingStories([]);
     }
-  };
+  }, []);
 
 
   const approveStory = async (id: string) => {
@@ -44,22 +53,23 @@ const AdminDashboard = () => {
     });
     fetchData(); // Refresh
   };
+
   useEffect(() => {
-  // 1. Initial fetch
-  fetchData();
+    // 1. Initial fetch
+    fetchData();
 
-  // 2. Real-time listener
-  const socket = io(API_BASE_URL);
-  
-  socket.on("admin_update_stats", () => {
-    console.log("New registration detected! Refreshing dashboard...");
-    fetchData(); // This re-runs your API calls automatically
-  });
+    // 2. Real-time listener
+    const socket = io(API_BASE_URL);
+    
+    socket.on("admin_update_stats", () => {
+      console.log("New registration detected! Refreshing dashboard...");
+      fetchData(); // This re-runs your API calls automatically
+    });
 
-  return () => {
-    socket.disconnect();
-  };
-}, []);
+    return () => {
+      socket.disconnect();
+    };
+  }, [fetchData]);
 
   return (
     <div className="min-h-screen bg-gray-100 ml-64 flex flex-col">
@@ -108,7 +118,14 @@ const AdminDashboard = () => {
   );
 };
 
-const StatCard = ({ title, value, icon, color }: any) => (
+interface StatCardProps {
+  title: string;
+  value: number;
+  icon: string;
+  color: string;
+}
+
+const StatCard = ({ title, value, icon, color }: StatCardProps) => (
   <div className="bg-white p-8 3xl:p-20 rounded-3xl shadow-sm flex items-center gap-6">
     <div className={`w-16 h-16 3xl:w-32 3xl:h-32 rounded-full bg-gray-50 flex items-center justify-center ${color}`}>
       <span className="material-symbols-outlined text-4xl 3xl:text-8xl">{icon}</span>
@@ -120,4 +137,4 @@ const StatCard = ({ title, value, icon, color }: any) => (
   </div>
 );
 
-export default AdminDashboard;
+export default AdminDashboard;

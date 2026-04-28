@@ -20,7 +20,7 @@ const Navbar = () => {
       const payload = JSON.parse(atob(token.split('.')[1]));
       role = payload.role || 'user';
       userId = payload.id;
-    } catch (e) {
+    } catch {
       console.error("Token error");
     }
   }
@@ -54,10 +54,11 @@ const Navbar = () => {
         });
         const data = await res.json();
         setUnreadCount(data.count);
-      } catch (err) { console.error("Count failed"); }
+      } catch { console.error("Count failed"); }
     };
     fetchCount();
   }, [token, location.pathname, isAdmin]);
+
 
   const isAdminRoute = location.pathname.startsWith('/admin');
 
@@ -165,7 +166,14 @@ const Navbar = () => {
 };
 
 // Helper Components for Cleaner Code
-const NavPill = ({ to, icon, label, count }: any) => (
+interface NavPillProps {
+  to: string;
+  icon: string;
+  label: string;
+  count?: number;
+}
+
+const NavPill = ({ to, icon, label, count = 0 }: NavPillProps) => (
   <NavLink 
     to={to} 
     className={({ isActive }) => `group flex items-center gap-2 p-1 pr-4 rounded-full border transition-all duration-300 relative shadow-sm ${

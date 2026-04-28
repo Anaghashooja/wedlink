@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GoogleLogin } from '@react-oauth/google';
+import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
 import { API_BASE_URL } from '../config';
 
 const Auth: React.FC = () => {
@@ -14,8 +14,7 @@ const Auth: React.FC = () => {
     profession: '', annualIncome: '', height: '', diet: 'Veg',
   });
 
-  const [images, setImages] = useState<File[]>([]);
-  const [previews, setPreviews] = useState<string[]>([]);
+  const [images] = useState<File[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -23,7 +22,7 @@ const Auth: React.FC = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleGoogleSuccess = async (credentialResponse: any) => {
+  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
     setLoading(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/auth/google`, {
@@ -36,7 +35,7 @@ const Auth: React.FC = () => {
         localStorage.setItem('token', data.token);
         navigate('/');
       } else { setError(data.msg || 'Google Sign-In failed'); }
-    } catch (err) { setError('Unable to connect to server'); } finally { setLoading(false); }
+    } catch { setError('Unable to connect to server'); } finally { setLoading(false); }
   };
 
 
@@ -73,12 +72,13 @@ const Auth: React.FC = () => {
       } else {
         setError(data.msg || 'Authentication failed');
       }
-    } catch (err) {
+    } catch {
       setError('Unable to connect to server');
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen lg:h-auto 2xl:h-[calc(100vh-160px)] bg-rose-50 flex items-center justify-center p-3 sm:p-6 transition-all">

@@ -1,5 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+
+interface PlanDetails {
+  price: string;
+  features: string[];
+}
+
+interface PlanInfo {
+  [key: string]: PlanDetails;
+}
 
 const Checkout = () => {
   const { plan } = useParams(); // 'Gold' or 'Diamond'
@@ -16,12 +25,13 @@ const Checkout = () => {
   }, [navigate]);
 
   // Plan Data Mapping
-  const planInfo: any = {
+  const planInfo: PlanInfo = {
     Gold: { price: "29.00", features: ["50 Interests Daily", "Profile Boost 1x", "Limited Chat"] },
     Diamond: { price: "89.00", features: ["Unlimited Interests", "Direct Contact Details", "Relationship Advisor"] }
   };
 
   const currentPlan = planInfo[plan as string] || planInfo.Gold;
+
 
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -168,7 +178,12 @@ const Checkout = () => {
   );
 };
 
-const Badge = ({ text, icon }: any) => (
+interface BadgeProps {
+  text: string;
+  icon: string;
+}
+
+const Badge = ({ text, icon }: BadgeProps) => (
     <div className="flex items-center gap-2 px-3 py-1.5 3xl:px-8 3xl:py-4 rounded-lg bg-white border border-rose-100 shadow-sm">
         <span className="material-symbols-outlined text-rose-500 text-sm 3xl:text-3xl" style={{fontVariationSettings: "'FILL' 1"}}>{icon}</span>
         <span className="text-[10px] 3xl:text-2xl uppercase tracking-widest font-bold text-gray-500">{text}</span>

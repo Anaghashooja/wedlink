@@ -1,13 +1,32 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import AdminSidebar from '../components/AdminSidebar';
 
+interface User {
+  _id: string;
+  name: string;
+  photos?: string[];
+}
+
+interface Report {
+  _id: string;
+  conversationId: string;
+  reportedUser: User;
+  reporter: User;
+  reason: string;
+}
+
+interface TranscriptMessage {
+  sender: string;
+  text: string;
+}
+
 const ReportedChats = () => {
-  const [reports, setReports] = useState<any[]>([]);
-  const [selectedReport, setSelectedReport] = useState<any>(null);
-  const [transcript, setTranscript] = useState<any[]>([]);
+  const [reports, setReports] = useState<Report[]>([]);
+  const [selectedReport, setSelectedReport] = useState<Report | null>(null);
+  const [transcript, setTranscript] = useState<TranscriptMessage[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchReports = async () => {
+  const fetchReports = useCallback(async () => {
     const token = localStorage.getItem('token');
     const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/admin/reports', {
       headers: { 'Authorization': `Bearer ${token}` }
@@ -15,9 +34,9 @@ const ReportedChats = () => {
     const data = await res.json();
     setReports(data);
     setLoading(false);
-  };
+  }, []);
 
-  const viewTranscript = async (report: any) => {
+  const viewTranscript = async (report: Report) => {
     setSelectedReport(report);
     const token = localStorage.getItem('token');
     const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/admin/reports/transcript/${report.conversationId}`, {
@@ -27,6 +46,7 @@ const ReportedChats = () => {
   };
 
   const handleAction = async (action: string) => {
+    if (!selectedReport) return;
     if (!window.confirm(`Are you sure you want to ${action} this user?`)) return;
     const token = localStorage.getItem('token');
     await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/admin/users/action/${selectedReport.reportedUser._id}`, {
@@ -41,7 +61,9 @@ const ReportedChats = () => {
     fetchReports();
   };
 
-  useEffect(() => { fetchReports(); }, []);
+  useEffect(() => { 
+    fetchReports(); 
+  }, [fetchReports]);
 
   if (loading) return <div className="ml-64 p-20 3xl:text-6xl text-rose-900 font-serif italic">Loading Archive...</div>;
 
@@ -137,4 +159,4 @@ const ReportedChats = () => {
   );
 };
 
-export default ReportedChats;
+export default ReportedChats;

@@ -1,8 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState, useCallback } from 'react';
+
+interface Story {
+  image: string;
+  coupleNames: string;
+  location: string;
+  testimonial: string;
+}
 
 const SuccessStories: React.FC = () => {
-  const [stories, setStories] = useState<any[]>([]);
+  const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   
@@ -11,16 +17,22 @@ const SuccessStories: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const fetchStories = async () => {
+  const fetchStories = useCallback(async () => {
     try {
       const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/stories');
       const data = await res.json();
       setStories(data);
-    } catch (err) { console.error("Failed to load stories"); } 
-    finally { setLoading(false); }
-  };
+    } catch (err) { 
+      console.error("Failed to load stories", err); 
+    } finally { 
+      setLoading(false); 
+    }
+  }, []);
 
-  useEffect(() => { fetchStories(); }, []);
+  useEffect(() => { 
+    fetchStories(); 
+  }, [fetchStories]);
+
 
   const handleStorySubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,13 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+interface UserProfile {
+  name: string;
+  email: string;
+  gender: string;
+  religion?: string;
+  profession?: string;
+  isVerified: boolean;
+  date: string;
+  photos: string[];
+  photoPrivacy: boolean;
+}
+
 const Profile = () => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [verifying, setVerifying] = useState(false);
   const navigate = useNavigate();
 
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     const token = localStorage.getItem('token');
     try {
       const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/auth/me', {
@@ -21,9 +33,12 @@ const Profile = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [navigate]);
 
-  useEffect(() => { fetchProfile(); }, []);
+  useEffect(() => { 
+    fetchProfile(); 
+  }, [fetchProfile]);
+
 
   // 1. ADDED: Handle Privacy Toggle Logic
   const handleTogglePrivacy = async () => {
@@ -181,7 +196,12 @@ const Profile = () => {
   );
 };
 
-const DetailItem = ({ label, value }: any) => (
+interface DetailItemProps {
+  label: string;
+  value?: string;
+}
+
+const DetailItem = ({ label, value }: DetailItemProps) => (
   <div className="space-y-1">
     <p className="text-gray-400 text-[10px] 3xl:text-2xl font-bold uppercase tracking-widest">{label}</p>
     <p className="text-gray-800 font-semibold md:text-lg 3xl:text-4xl">{value}</p>
