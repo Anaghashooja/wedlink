@@ -51,7 +51,7 @@ const Profile = () => {
       const data = await res.json();
       if (res.ok) {
         // Update local state to show the toggle moving
-        setUser({ ...user, photoPrivacy: data.photoPrivacy });
+        setUser(prev => prev ? { ...prev, photoPrivacy: data.photoPrivacy } : null);
       }
     } catch (err) {
       alert("Error updating privacy settings");
@@ -122,7 +122,7 @@ const Profile = () => {
               <DetailItem label="Email Address" value={user?.email} />
               <DetailItem label="Community" value={user?.religion || 'Not Specified'} />
               <DetailItem label="Gender" value={user?.gender} />
-              <DetailItem label="Joined On" value={new Date(user?.date).toLocaleDateString()} />
+              <DetailItem label="Joined On" value={user?.date ? new Date(user.date).toLocaleDateString() : 'N/A'} />
             </div>
           </div>
 
