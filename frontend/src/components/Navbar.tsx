@@ -106,7 +106,8 @@ const Navbar = () => {
                 {!isAdmin && (
                   <>
                     <NavPill to="/search" icon="search" label="Search" />
-                    <NavPill to="/messages" icon="mail" label="Inbox" count={unreadCount} />
+                    <NavPill to="/inbox" icon="favorite" label="Requests" count={unreadCount} />
+                    <NavPill to="/messages" icon="chat_bubble" label="Chats" />
                     <NavPill to="/profile" icon="person" label="Profile" />
                   </>
                 )}
@@ -146,7 +147,8 @@ const Navbar = () => {
               {isLoggedIn && (
                 <>
                   <Link to="/search" onClick={() => setIsOpen(false)} className="mobile-link text-rose-600">Search</Link>
-                  <Link to="/messages" onClick={() => setIsOpen(false)} className="mobile-link text-rose-600">Inbox ({unreadCount})</Link>
+                  <Link to="/inbox" onClick={() => setIsOpen(false)} className="mobile-link text-rose-600">Requests ({unreadCount})</Link>
+                  <Link to="/messages" onClick={() => setIsOpen(false)} className="mobile-link text-rose-600">Chats</Link>
                   <Link to="/settings" onClick={() => setIsOpen(false)} className="mobile-link">Settings</Link>
                   <Link to="/alerts" onClick={() => setIsOpen(false)} className="mobile-link text-rose-600">Alerts</Link>
                 </>
