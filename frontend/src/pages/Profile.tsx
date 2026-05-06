@@ -17,6 +17,10 @@ const Profile = () => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [verifying, setVerifying] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState({ name: '', profession: '', religion: '', gender: '' });
+  const [savingProfile, setSavingProfile] = useState(false);
   const navigate = useNavigate();
 
   const fetchProfile = useCallback(async () => {
@@ -81,6 +85,68 @@ const Profile = () => {
     }
   };
 
+  const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.[0]) return;
+    setUploadingPhoto(true);
+    const formData = new FormData();
+    formData.append('photo', e.target.files[0]);
+
+    try {
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/auth/upload-photo', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+        body: formData
+      });
+      if (res.ok) {
+        fetchProfile();
+      } else {
+        const data = await res.json();
+        alert(data.msg || "Upload failed");
+      }
+    } catch (err) {
+      alert("Upload failed");
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
+  const handleEditToggle = () => {
+    if (!isEditing && user) {
+      setEditData({
+        name: user.name || '',
+        profession: user.profession || '',
+        religion: user.religion || '',
+        gender: user.gender || ''
+      });
+    }
+    setIsEditing(!isEditing);
+  };
+
+  const handleSaveProfile = async () => {
+    setSavingProfile(true);
+    try {
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/auth/me', {
+        method: 'PUT',
+        headers: { 
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(editData)
+      });
+      if (res.ok) {
+        setIsEditing(false);
+        fetchProfile();
+      } else {
+        const errText = await res.text();
+        alert("Failed to update profile: " + errText);
+      }
+    } catch (err: any) {
+      alert("Error saving profile: " + err.message);
+    } finally {
+      setSavingProfile(false);
+    }
+  };
+
   if (loading) return <div className="text-center py-20 3xl:text-6xl text-rose-500 font-bold">Loading...</div>;
 
   return (
@@ -111,17 +177,74 @@ const Profile = () => {
             <div className="flex justify-between items-start mb-8">
               <div>
                 <div className="flex items-center gap-3">
+                  {isEditing ? (
+                    <input 
+                      type="text" 
+                      value={editData.name} 
+                      onChange={(e) => setEditData({...editData, name: e.target.value})}
+                      className="text-3xl md:text-4xl 3xl:text-8xl font-bold text-gray-800 italic border-b-2 border-rose-300 focus:outline-none focus:border-rose-500 bg-transparent w-full"
+                    />
+                  ) : (
                     <h1 className="text-3xl md:text-4xl 3xl:text-8xl font-bold text-gray-800 italic">{user?.name}</h1>
-                    {user?.isVerified && <span className="text-[#775a19] font-bold text-xs 3xl:text-3xl uppercase tracking-widest bg-rose-50 px-3 py-1 rounded-full">Verified</span>}
+                  )}
+                  {user?.isVerified && !isEditing && <span className="text-[#775a19] font-bold text-xs 3xl:text-3xl uppercase tracking-widest bg-rose-50 px-3 py-1 rounded-full">Verified</span>}
                 </div>
-                <p className="text-rose-500 font-semibold 3xl:text-4xl mt-2 uppercase tracking-tighter">{user?.profession || 'Member'}</p>
+                {isEditing ? (
+                  <input 
+                    type="text" 
+                    value={editData.profession} 
+                    onChange={(e) => setEditData({...editData, profession: e.target.value})}
+                    placeholder="Profession"
+                    className="text-rose-500 font-semibold 3xl:text-4xl mt-2 uppercase tracking-tighter border-b-2 border-rose-200 focus:outline-none focus:border-rose-500 bg-transparent w-full"
+                  />
+                ) : (
+                  <p className="text-rose-500 font-semibold 3xl:text-4xl mt-2 uppercase tracking-tighter">{user?.profession || 'Member'}</p>
+                )}
               </div>
-              <button className="bg-rose-50 text-rose-600 px-6 py-2 3xl:px-12 3xl:py-6 3xl:text-3xl rounded-xl font-bold hover:bg-rose-500 hover:text-white transition">Edit</button>
+              {isEditing ? (
+                <div className="flex gap-2">
+                  <button onClick={handleEditToggle} className="bg-gray-100 text-gray-600 px-4 py-2 3xl:px-8 3xl:py-4 rounded-xl font-bold hover:bg-gray-200 transition">Cancel</button>
+                  <button onClick={handleSaveProfile} disabled={savingProfile} className="bg-rose-500 text-white px-6 py-2 3xl:px-12 3xl:py-6 rounded-xl font-bold hover:bg-rose-600 transition">{savingProfile ? 'Saving...' : 'Save'}</button>
+                </div>
+              ) : (
+                <button onClick={handleEditToggle} className="bg-rose-50 text-rose-600 px-6 py-2 3xl:px-12 3xl:py-6 3xl:text-3xl rounded-xl font-bold hover:bg-rose-500 hover:text-white transition">Edit</button>
+              )}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 3xl:gap-16 border-t pt-8">
               <DetailItem label="Email Address" value={user?.email} />
-              <DetailItem label="Community" value={user?.religion || 'Not Specified'} />
-              <DetailItem label="Gender" value={user?.gender} />
+              
+              {isEditing ? (
+                <div className="space-y-1">
+                  <p className="text-gray-400 text-[10px] 3xl:text-2xl font-bold uppercase tracking-widest">Community</p>
+                  <input 
+                    type="text" 
+                    value={editData.religion} 
+                    onChange={(e) => setEditData({...editData, religion: e.target.value})}
+                    className="text-gray-800 font-semibold md:text-lg 3xl:text-4xl border-b-2 border-rose-200 focus:outline-none focus:border-rose-500 bg-transparent w-full"
+                  />
+                </div>
+              ) : (
+                <DetailItem label="Community" value={user?.religion || 'Not Specified'} />
+              )}
+
+              {isEditing ? (
+                <div className="space-y-1">
+                  <p className="text-gray-400 text-[10px] 3xl:text-2xl font-bold uppercase tracking-widest">Gender</p>
+                  <select 
+                    value={editData.gender} 
+                    onChange={(e) => setEditData({...editData, gender: e.target.value})}
+                    className="text-gray-800 font-semibold md:text-lg 3xl:text-4xl border-b-2 border-rose-200 focus:outline-none focus:border-rose-500 bg-transparent w-full"
+                  >
+                    <option value="">Select</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+              ) : (
+                <DetailItem label="Gender" value={user?.gender} />
+              )}
+              
               <DetailItem label="Joined On" value={user?.date ? new Date(user.date).toLocaleDateString() : 'N/A'} />
             </div>
           </div>
@@ -183,8 +306,23 @@ const Profile = () => {
             <h3 className="text-xl 3xl:text-4xl font-bold text-gray-800 mb-6">Gallery ({user?.photos?.length || 0}/6)</h3>
             <div className="grid grid-cols-3 gap-3 3xl:gap-6">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="aspect-square bg-rose-50 rounded-xl border-2 border-dashed border-rose-100 flex items-center justify-center overflow-hidden">
-                  {user?.photos?.[i] ? <img src={user.photos[i]} className="w-full h-full object-cover" alt="gallery" /> : <span className="text-rose-200 text-2xl">+</span>}
+                <div key={i} className="aspect-square bg-rose-50 rounded-xl border-2 border-dashed border-rose-100 flex items-center justify-center overflow-hidden relative">
+                  {user?.photos?.[i] ? (
+                    <img src={user.photos[i]} className="w-full h-full object-cover" alt="gallery" />
+                  ) : (
+                    <label className="cursor-pointer flex items-center justify-center w-full h-full hover:bg-rose-100 transition-colors">
+                      <span className="text-rose-200 text-2xl">
+                        {uploadingPhoto ? '...' : '+'}
+                      </span>
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        className="hidden" 
+                        onChange={handleGalleryUpload} 
+                        disabled={uploadingPhoto} 
+                      />
+                    </label>
+                  )}
                 </div>
               ))}
             </div>

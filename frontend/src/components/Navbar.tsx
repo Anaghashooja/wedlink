@@ -176,24 +176,28 @@ interface NavPillProps {
 }
 
 const NavPill = ({ to, icon, label, count = 0 }: NavPillProps) => (
-  <NavLink 
-    to={to} 
-    className={({ isActive }) => `group flex items-center gap-2 p-1 pr-4 rounded-full border transition-all duration-300 relative shadow-sm ${
-      isActive 
-      ? 'bg-rose-500 border-rose-500 text-white' 
-      : 'bg-rose-50 border-rose-100 hover:bg-rose-500'
-    }`}
-  >
-    <div className={`w-10 h-10 3xl:w-20 3xl:h-20 rounded-full flex items-center justify-center transition-colors relative ${
-      // We use a nested check or simpler logic: if parent is active (via class), we change colors
-      'bg-rose-500 text-white group-[.active]:bg-white group-[.active]:text-rose-500 group-hover:bg-white group-hover:text-rose-500'
-    }`}>
-      <span className="material-symbols-outlined 3xl:text-5xl">{icon}</span>
-      {count > 0 && <span className="absolute -top-1 -right-1 flex h-4 w-4 3xl:h-8 3xl:w-8"><span className="animate-ping absolute h-full w-full rounded-full bg-rose-400 opacity-75"></span><span className="relative flex rounded-full h-4 w-4 3xl:h-8 3xl:w-8 bg-rose-600 border border-white text-[8px] 3xl:text-lg items-center justify-center font-bold">{count}</span></span>}
-    </div>
-    <span className={`font-bold 3xl:text-3xl uppercase text-[10px] tracking-wider group-hover:text-white transition-colors ${
-      'text-rose-700 group-[.active]:text-white'
-    }`}>{label}</span>
+  <NavLink to={to} className="block">
+    {({ isActive }) => (
+      <div className={`group flex items-center gap-2 p-1 pr-4 rounded-full border transition-all duration-300 relative shadow-sm ${
+        isActive 
+        ? 'bg-rose-500 border-rose-500 text-white' 
+        : 'bg-rose-50 border-rose-100 hover:bg-rose-500'
+      }`}>
+        <div className={`w-10 h-10 3xl:w-20 3xl:h-20 rounded-full flex items-center justify-center transition-colors relative ${
+          isActive
+          ? 'bg-white text-rose-500'
+          : 'bg-rose-500 text-white group-hover:bg-white group-hover:text-rose-500'
+        }`}>
+          <span className="material-symbols-outlined 3xl:text-5xl">{icon}</span>
+          {count > 0 && <span className="absolute -top-1 -right-1 flex h-4 w-4 3xl:h-8 3xl:w-8"><span className="animate-ping absolute h-full w-full rounded-full bg-rose-400 opacity-75"></span><span className="relative flex rounded-full h-4 w-4 3xl:h-8 3xl:w-8 bg-rose-600 border border-white text-[8px] 3xl:text-lg items-center justify-center font-bold text-white">{count}</span></span>}
+        </div>
+        <span className={`font-bold 3xl:text-3xl uppercase text-[10px] tracking-wider transition-colors ${
+          isActive
+          ? 'text-white'
+          : 'text-rose-700 group-hover:text-white'
+        }`}>{label}</span>
+      </div>
+    )}
   </NavLink>
 );
 

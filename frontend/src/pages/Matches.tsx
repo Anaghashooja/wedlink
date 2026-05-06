@@ -54,11 +54,7 @@ const Matches: React.FC = () => {
     <PageLayout
       title={<>Recommended <span className="text-rose-600">Matches</span></>}
       subtitle="Based on your profile preferences and values."
-      headerAction={
-        <button className="bg-white border border-gray-200 px-6 py-2 3xl:px-12 3xl:py-5 rounded-full text-gray-600 font-bold 3xl:text-3xl shadow-sm hover:bg-gray-50">
-          Filters
-        </button>
-      }
+     
     >
       {/* GRID LAYOUT */}
       {matches.length === 0 ? (

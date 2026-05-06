@@ -323,6 +323,45 @@ const handleVerification=async (req, res) => {
         res.status(500).send("Update Error");
     }
 };
+
+const updateProfile = async (req, res) => {
+    try {
+        const { name, profession, religion, gender } = req.body;
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ msg: "User not found" });
+
+        if (name) user.name = name;
+        if (profession) user.profession = profession;
+        if (religion) user.religion = religion;
+        if (gender) user.gender = gender;
+
+        await user.save();
+        res.json({ msg: "Profile updated successfully", user });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Server Error");
+    }
+};
+
+const uploadPhoto = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ msg: "No photo uploaded" });
+        }
+        
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ msg: "User not found" });
+
+        user.photos.push(req.file.path);
+        await user.save();
+
+        res.json({ msg: "Photo added successfully", photos: user.photos });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Server Error");
+    }
+};
+
 module.exports = {
     register,
     googleAuth,
@@ -335,5 +374,7 @@ module.exports = {
     saveFCMToken,
     togglePrivacy ,
     getPendingVerifications,
-    handleVerification    
+    handleVerification,
+    uploadPhoto,
+    updateProfile
 };

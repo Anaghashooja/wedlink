@@ -42,6 +42,7 @@ const UserSchema = new mongoose.Schema({
     smsAlerts: { type: Boolean, default: false }
   },
   blockedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   verificationDoc: { type: String },
   date: { type: Date, default: Date.now }
 });

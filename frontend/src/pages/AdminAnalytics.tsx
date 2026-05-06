@@ -7,6 +7,49 @@ const Analytics = () => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  const [showGenerateForm, setShowGenerateForm] = useState(false);
+  const [reportStartDate, setReportStartDate] = useState('');
+  const [reportEndDate, setReportEndDate] = useState('');
+  const [reportsList, setReportsList] = useState([
+    {
+      id: 1,
+      title: 'Weekly Performance Summary',
+      period: 'Aug 21 - Aug 28, 2023',
+      format: 'PDF',
+      size: '2.4 MB',
+      icon: 'summarize',
+      color: 'bg-secondary-container/30 text-secondary'
+    },
+    {
+      id: 2,
+      title: 'Q3 Revenue & Subscription Audit',
+      period: 'Jul 01 - Sep 30, 2023',
+      format: 'CSV',
+      size: '1.1 MB',
+      icon: 'account_balance',
+      color: 'bg-primary-fixed/30 text-primary'
+    }
+  ]);
+
+  const handleGenerateReport = () => {
+    if (!reportStartDate || !reportEndDate) return;
+    
+    const newReport = {
+      id: Date.now(),
+      title: `Custom Period Audit`,
+      period: `${new Date(reportStartDate).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })} - ${new Date(reportEndDate).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}`,
+      format: 'PDF',
+      size: '1.2 MB',
+      icon: 'analytics',
+      color: 'bg-green-100 text-green-700'
+    };
+    
+    setReportsList([newReport, ...reportsList]);
+    setShowGenerateForm(false);
+    setReportStartDate('');
+    setReportEndDate('');
+  };
+
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
@@ -234,39 +277,66 @@ const Analytics = () => {
         <section className="space-y-6">
           <div className="flex justify-between items-center border-b border-stone-200 pb-4">
             <h4 className=" serif text-2xl font-bold">Generated Reports</h4>
-            <button className="text-xs font-bold uppercase tracking-widest text-primary hover:text-primary-container transition-colors">Generate New Audit</button>
+            <button 
+              onClick={() => setShowGenerateForm(!showGenerateForm)}
+              className="text-xs font-bold uppercase tracking-widest text-primary hover:text-primary-container transition-colors"
+            >
+              {showGenerateForm ? 'Cancel' : 'Generate New Audit'}
+            </button>
           </div>
+
+          {showGenerateForm && (
+            <div className="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10 shadow-sm">
+              <h5 className="font-bold text-sm mb-4 text-on-surface">Set Report Period</h5>
+              <div className="flex flex-wrap items-end gap-6">
+                <div className="flex flex-col gap-2">
+                  <label className="text-[10px] font-bold text-stone-500 uppercase tracking-widest">Start Date</label>
+                  <input 
+                    type="date" 
+                    value={reportStartDate}
+                    onChange={(e) => setReportStartDate(e.target.value)}
+                    className="px-4 py-2 border border-outline-variant/20 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-stone-700 transition-all shadow-sm"
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="text-[10px] font-bold text-stone-500 uppercase tracking-widest">End Date</label>
+                  <input 
+                    type="date" 
+                    value={reportEndDate}
+                    onChange={(e) => setReportEndDate(e.target.value)}
+                    className="px-4 py-2 border border-outline-variant/20 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-stone-700 transition-all shadow-sm"
+                  />
+                </div>
+                <button 
+                  onClick={handleGenerateReport}
+                  disabled={!reportStartDate || !reportEndDate}
+                  className="px-6 py-2.5 bg-primary text-white rounded-lg text-sm font-bold shadow-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Generate Report
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Report Items */}
-            <div className="flex items-center justify-between p-5 bg-white rounded-xl border border-outline-variant/10 hover:shadow-lg transition-shadow duration-300">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-secondary-container/30 text-secondary rounded-lg">
-                  <span className="material-symbols-outlined">summarize</span>
+            {reportsList.map((report) => (
+              <div key={report.id} className="flex items-center justify-between p-5 bg-white rounded-xl border border-outline-variant/10 hover:shadow-lg transition-shadow duration-300">
+                <div className="flex items-center gap-4">
+                  <div className={`p-3 rounded-lg ${report.color}`}>
+                    <span className="material-symbols-outlined">{report.icon}</span>
+                  </div>
+                  <div>
+                    <h6 className="font-bold text-sm">{report.title}</h6>
+                    <p className="text-[10px] text-stone-500 uppercase tracking-tighter mt-0.5">
+                      {report.period} • {report.format} • {report.size}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h6 className="font-bold text-sm">Weekly Performance Summary</h6>
-                  <p className="text-[10px] text-stone-500 uppercase tracking-tighter mt-0.5">Aug 21 - Aug 28, 2023 • PDF • 2.4 MB</p>
-                </div>
+                <button className="flex items-center gap-2 px-4 py-2 text-primary font-bold text-xs uppercase tracking-widest hover:bg-primary/5 rounded-lg transition-colors">
+                  <span className="material-symbols-outlined text-lg">download</span> Download
+                </button>
               </div>
-              <button className="flex items-center gap-2 px-4 py-2 text-primary font-bold text-xs uppercase tracking-widest hover:bg-primary/5 rounded-lg transition-colors">
-                <span className="material-symbols-outlined text-lg">download</span> Download
-              </button>
-            </div>
-            
-            <div className="flex items-center justify-between p-5 bg-white rounded-xl border border-outline-variant/10 hover:shadow-lg transition-shadow duration-300">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-primary-fixed/30 text-primary rounded-lg">
-                  <span className="material-symbols-outlined">account_balance</span>
-                </div>
-                <div>
-                  <h6 className="font-bold text-sm">Q3 Revenue & Subscription Audit</h6>
-                  <p className="text-[10px] text-stone-500 uppercase tracking-tighter mt-0.5">Jul 01 - Sep 30, 2023 • CSV • 1.1 MB</p>
-                </div>
-              </div>
-              <button className="flex items-center gap-2 px-4 py-2 text-primary font-bold text-xs uppercase tracking-widest hover:bg-primary/5 rounded-lg transition-colors">
-                <span className="material-symbols-outlined text-lg">download</span> Download
-              </button>
-            </div>
+            ))}
           </div>
         </section>
       </div>
