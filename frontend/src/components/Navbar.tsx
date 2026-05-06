@@ -22,6 +22,7 @@ const Navbar = () => {
       userId = payload.id;
     } catch {
       console.error("Token error");
+      
     }
   }
 

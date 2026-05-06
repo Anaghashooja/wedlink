@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
 import { API_BASE_URL } from '../config';
@@ -7,6 +7,14 @@ const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [isAdminMode, setIsAdminMode] = useState(false); // New state for Admin Login
   const navigate = useNavigate();
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [isLogin]);
   
   const [formData, setFormData] = useState({
     name: '', email: '', password: '', gender: '',
@@ -95,7 +103,7 @@ const Auth: React.FC = () => {
           </p>
         </div>
 
-        <div className="p-5 sm:p-8 2xl:p-14 overflow-y-auto custom-scrollbar">
+        <div ref={scrollRef} className="p-5 sm:p-8 2xl:p-14 overflow-y-auto custom-scrollbar">
           <form onSubmit={handleSubmit} className="space-y-6">
             
             <div className={`grid gap-6 ${isLogin ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
